@@ -15,6 +15,7 @@ const CreateDirecting = () => {
   const [secondDescription, setSecondDescription] = useState("");
   const [skills, setSkills] = useState([]);
   const [newSkill, setNewSkill] = useState("");
+  const [gallery, setGallery] = useState([]);
 
   const navigate = useNavigate();
 
@@ -51,6 +52,7 @@ const CreateDirecting = () => {
           imagePath: mainImagePath,
           secondImagePath: secondImagePath,
           skills: skills,
+          gallery: gallery,
         }
       );
 
@@ -81,10 +83,43 @@ const CreateDirecting = () => {
     }
   };
 
+  const uploadGalleryImages = async (acceptedFiles) => {
+    const uploadedPaths = await Promise.all(
+      acceptedFiles.map(async (file) => {
+        const formData = new FormData();
+        formData.append("image", file);
+        try {
+          const response = await axios.post(
+            `${process.env.REACT_APP_SERVER_URL}/upload`,
+            formData
+          );
+          return response.data.path;
+        } catch (error) {
+          console.error("Ошибка загрузки файла:", error);
+          alert(`Произошла ошибка: ${error.response.data.message}`);
+          return null;
+        }
+      })
+    );
+    setGallery((prevGallery) => [
+      ...prevGallery,
+      ...uploadedPaths.filter(Boolean),
+    ]);
+  };
+
+  const removeImageFromGallery = (index) => {
+    setGallery((prevGallery) => prevGallery.filter((_, i) => i !== index));
+  };
+
   const onDropMain = (acceptedFiles) =>
     uploadImage(acceptedFiles, setMainImagePath);
   const onDropSecond = (acceptedFiles) =>
     uploadImage(acceptedFiles, setSecondImagePath);
+
+  const {
+    getRootProps: getRootPropsGallery,
+    getInputProps: getInputPropsGallery,
+  } = useDropzone({ onDrop: uploadGalleryImages });
 
   const { getRootProps: getRootPropsMain, getInputProps: getInputPropsMain } =
     useDropzone({ onDrop: onDropMain });
@@ -171,6 +206,31 @@ const CreateDirecting = () => {
                   )}
                 </div>
               </label>
+            </div>
+          </div>
+
+          <div className={style.create_direction__gallery}>
+            <p>Галерея</p>
+            <div className={style.create_direction__image}>
+              <input id="gallery" {...getInputPropsGallery()} />
+              <label htmlFor="gallery">
+                <div>
+                  <p>Перетащите файлы сюда или нажмите для выбора</p>
+                </div>
+              </label>
+            </div>
+            <div className={style.gallery_preview}>
+              {gallery.map((image, index) => (
+                <div key={index} className={style.gallery_item}>
+                  <img
+                    src={`${process.env.REACT_APP_SERVER_URL}${image}`}
+                    alt={`Gallery ${index}`}
+                  />
+                  <button onClick={() => removeImageFromGallery(index)}>
+                    Удалить
+                  </button>
+                </div>
+              ))}
             </div>
           </div>
 

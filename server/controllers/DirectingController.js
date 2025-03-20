@@ -11,6 +11,7 @@ export const createDirecting = async (req, res) => {
       secondDescription,
       secondImagePath,
       skills,
+      gallery,
     } = req.body;
 
     if (!name || !description || admins.length < 1) {
@@ -27,6 +28,7 @@ export const createDirecting = async (req, res) => {
       secondDescription,
       secondImagePath,
       skills,
+      gallery,
     });
 
     const directing = await doc.save();

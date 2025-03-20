@@ -217,6 +217,16 @@ const AdminEvent = () => {
     setMembers((prevAdmins) => prevAdmins.filter((adminId) => adminId !== id));
   };
 
+  const addApplications = (id) => {
+    setApplications((prevAdmins) => [...prevAdmins, id]);
+  };
+
+  const removeApplications = (id) => {
+    setApplications((prevAdmins) =>
+      prevAdmins.filter((adminId) => adminId !== id)
+    );
+  };
+
   const addStudent = (id) => {
     setApplications((prevAdmins) => [...prevAdmins, id]);
   };
@@ -429,6 +439,45 @@ const AdminEvent = () => {
                             ) : (
                               <button
                                 onClick={() => addStudentApplications(_id)}
+                                style={{ backgroundColor: "#009dff" }}
+                              >
+                                Добавить
+                              </button>
+                            )}
+                          </li>
+                        ))}
+                      </ul>
+                    )
+                  )}
+                </div>
+
+                <div className={style.create_direction__organizers}>
+                  <p>Приглашение отправлено</p>
+
+                  {loadingApplications ? (
+                    <p>Загрузка...</p>
+                  ) : (
+                    applicationsFull && (
+                      <ul>
+                        {applicationsFull.map(({ fullName, role, _id }) => (
+                          <li key={_id}>
+                            <div>
+                              <Link to={`/user/${_id}`}>
+                                <p>{role}</p>
+                                <p>{fullName}</p>
+                              </Link>
+                            </div>
+
+                            {applications.includes(_id) ? (
+                              <button
+                                onClick={() => removeApplications(_id)}
+                                style={{ backgroundColor: "red" }}
+                              >
+                                Удалить
+                              </button>
+                            ) : (
+                              <button
+                                onClick={() => addApplications(_id)}
                                 style={{ backgroundColor: "#009dff" }}
                               >
                                 Добавить
