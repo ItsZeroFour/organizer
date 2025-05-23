@@ -3,9 +3,31 @@ import UserModel from "../models/UserModel.js";
 
 export const createEvent = async (req, res) => {
   try {
-    const { name, description, imagePath, start, finish } = req.body;
+    const {
+      name,
+      description,
+      imagePath,
+      start,
+      finish,
+      directing,
+      place,
+      contact_name,
+      contact_email,
+      contact_work,
+    } = req.body;
 
-    if (!name || !description || !start || !finish || !imagePath) {
+    if (
+      !name ||
+      !description ||
+      !start ||
+      !finish ||
+      !imagePath ||
+      !directing ||
+      !place ||
+      !contact_name ||
+      !contact_email ||
+      !contact_work
+    ) {
       return res.status(401).json({
         message: "Заполните все необходимые поля",
       });
@@ -17,6 +39,12 @@ export const createEvent = async (req, res) => {
       imagePath,
       start,
       finish,
+      directing,
+      place,
+      contact_name,
+      contact_email,
+      contact_work,
+      admins,
     });
 
     const event = await doc.save();
@@ -225,6 +253,12 @@ export const updateEvent = async (req, res) => {
       finish: req.body.finish,
       imagePath: req.body.imagePath,
       userApplications: req.body.userApplications,
+      directing: req.body.directing,
+      place: req.body.place,
+      contact_name: req.body.contact_name,
+      contact_email: req.body.contact_email,
+      contact_work: req.body.contact_work,
+      admins: req.body.admins,
     });
 
     if (!updateEvent) {

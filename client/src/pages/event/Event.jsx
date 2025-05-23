@@ -92,26 +92,29 @@ const Event = ({ userData }) => {
                       <h1>{event.name}</h1>
                       <p>{event.description}</p>
 
-                      {userData &&
-                        (userData.role === "Студент" ? (
-                          <button
-                            onClick={handleJoinEvent}
-                            disabled={
-                              event.userApplications.includes(userData._id) ||
-                              event.members.includes(userData._id) ||
-                              event.applications.includes(userData._id)
-                            }
-                          >
-                            {event.applications.includes(userData._id) ||
-                            event.userApplications.includes(userData._id)
-                              ? "Ожидание подтверждения"
-                              : event.members.includes(userData._id)
-                              ? "Вы уже записаны"
-                              : "Записаться"}
-                          </button>
-                        ) : (
+                      {userData && userData.role === "Студент" && (
+                        <button
+                          onClick={handleJoinEvent}
+                          disabled={
+                            event.userApplications.includes(userData._id) ||
+                            event.members.includes(userData._id) ||
+                            event.applications.includes(userData._id)
+                          }
+                        >
+                          {event.applications.includes(userData._id) ||
+                          event.userApplications.includes(userData._id)
+                            ? "Ожидание подтверждения"
+                            : event.members.includes(userData._id)
+                            ? "Вы уже записаны"
+                            : "Записаться"}
+                        </button>
+                      )}
+
+                      {/* {userData &&
+                        (["Администратор"].includes(userData.role) ||
+                          event.admins.includes(userData._id)) && (
                           <Link to={`/admin-event/${id}`}>Управлять</Link>
-                        ))}
+                        )} */}
                     </div>
                   </div>
                 </div>
