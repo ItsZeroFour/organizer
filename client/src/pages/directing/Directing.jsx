@@ -119,8 +119,8 @@ const Directing = ({ userData }) => {
                           <Link to={`/admin-directing/${id}`}>Управлять</Link>
                         )}
 
-                      {(userData.role?.toLowerCase() === "зам. в.о." ||
-                        userData.role?.toLowerCase() === "администратор") && (
+                      {(userData?.role?.toLowerCase() === "зам. в.о." ||
+                        userData?.role?.toLowerCase() === "администратор") && (
                         <Link
                           className={style.directing__head__excel}
                           to={`${process.env.REACT_APP_SERVER_URL}/excel-direction/${id}`}
