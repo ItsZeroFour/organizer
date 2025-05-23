@@ -46,8 +46,9 @@ const Account = ({ userData }) => {
             <Link to="/create-directing">Создание направления</Link>
           )}
 
-          {(userData.role.toLowerCase() === "руководитель направления" ||
-            userData.role.toLowerCase() === "организатор" ||
+          {(userData.role.toLowerCase() === "сотрудник в.о." ||
+            userData.role.toLowerCase() === "руководитель с.о." ||
+            userData.role.toLowerCase() === "зам. в.о." ||
             userData.role.toLowerCase() === "руководитель в.о." ||
             userData.role.toLowerCase() === "администратор") && (
             <Link to="/create-event">Создание мероприятия</Link>
@@ -59,12 +60,14 @@ const Account = ({ userData }) => {
             <h3>
               {userData.role.toLowerCase() === "студент"
                 ? "Студент"
-                : userData.role.toLowerCase() === "организатор"
-                ? "Организатор воспитательног отдела"
+                : userData.role.toLowerCase() === "руководитель с.о."
+                ? "Руководитель студенческого объединения"
+                : userData.role.toLowerCase() === "сотрудник в.о."
+                ? "Сотрудник воспитательного отдела"
+                : userData.role.toLowerCase() === "зам. в.о."
+                ? "Заместитель директора по воспитательной работе"
                 : userData.role.toLowerCase() === "руководитель в.о."
-                ? "руководителя воспитательного отдела"
-                : userData.role.toLowerCase() === "руководитель направления"
-                ? "Руководитель направления"
+                ? "Руководитель воспитательного отдела"
                 : "Администратор"}
             </h3>
 

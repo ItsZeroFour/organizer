@@ -49,9 +49,9 @@ export const getAllOrganizers = async (req, res) => {
     const organizers = await UserModel.find({
       role: {
         $in: [
-          "Руководителя направления",
-          "Руководитель в.о.",
           "Организатор",
+          "Сотрудник в.о.",
+          "Руководитель с.о.",
           "Администратор",
         ],
       },
