@@ -33,6 +33,11 @@ const AdminEvent = () => {
   const [loadingUserApplicationsFull, setLoadingUserApplicationsFull] =
     useState(false);
 
+  const [loadingAdmins, setLoadingAdmins] = useState(false);
+  const [admins, setAdmins] = useState([]);
+  const [organizers, setOrganizers] = useState(null);
+  const [loadingOrganizers, setLoadingOrganizers] = useState(false);
+
   const { id } = useParams();
 
   useEffect(() => {
@@ -84,6 +89,7 @@ const AdminEvent = () => {
           applications: applications,
           members: members,
           userApplications: userApplications,
+          admins: admins,
         }
       );
 
@@ -160,10 +166,31 @@ const AdminEvent = () => {
   };
 
   useEffect(() => {
+    const getAllOrganizers = async () => {
+      try {
+        setLoadingOrganizers(true);
+
+        const getOrganizers = await axios.get(
+          `${process.env.REACT_APP_SERVER_URL}/directing/get-organizers`
+        );
+
+        setLoadingOrganizers(false);
+        setOrganizers(getOrganizers.data);
+      } catch (error) {
+        console.log(error);
+        setLoadingOrganizers(false);
+        alert(`Произошла ошибка: ${error?.response?.data.message}`);
+      }
+    };
+
+    getAllOrganizers();
+  }, []);
+
+  useEffect(() => {
     const getStudents = async () => {
       try {
         setLoadingStudents(true);
-        const response = await axios(
+        const response = await axios.get(
           `${process.env.REACT_APP_SERVER_URL}/event/get-students/${id}`
         );
 
@@ -185,7 +212,7 @@ const AdminEvent = () => {
     const getApplications = async () => {
       try {
         setLoadingApplications(true);
-        const response = await axios(
+        const response = await axios.get(
           `${process.env.REACT_APP_SERVER_URL}/event/get-applications/${id}`
         );
 
@@ -201,6 +228,28 @@ const AdminEvent = () => {
     };
 
     getApplications();
+  }, []);
+
+  useEffect(() => {
+    const getAdmins = async () => {
+      try {
+        setLoadingAdmins(true);
+        const response = await axios.get(
+          `${process.env.REACT_APP_SERVER_URL}/event/get-admins/${id}`
+        );
+
+        if (response.status === 200) {
+          setAdmins(response.data);
+          setLoadingAdmins(false);
+        }
+      } catch (error) {
+        alert(`Произошла ошибка: ${error?.response?.data.message}`);
+        console.error("Ошибка загрузки файла:", error);
+        setLoadingAdmins(false);
+      }
+    };
+
+    getAdmins();
   }, []);
 
   const onDropMain = (acceptedFiles) =>
@@ -246,6 +295,14 @@ const AdminEvent = () => {
 
   const removeStudentApplications = (id) => {
     setMembers((prevAdmins) => prevAdmins.filter((adminId) => adminId !== id));
+  };
+
+  const addAdmin = (id) => {
+    setAdmins((prevAdmins) => [...prevAdmins, id]);
+  };
+
+  const removeAdmin = (id) => {
+    setAdmins((prevAdmins) => prevAdmins.filter((adminId) => adminId !== id));
   };
 
   return (
@@ -489,6 +546,43 @@ const AdminEvent = () => {
                     )
                   )}
                 </div>
+              </div>
+
+              <div className={style.create_direction__organizers}>
+                <p>Добавить ответственных</p>
+
+                {loadingAdmins ? (
+                  <p>Загрузка руководителей...</p>
+                ) : (
+                  organizers && (
+                    <ul>
+                      {organizers.map(({ fullName, role, _id }) => (
+                        <li key={_id}>
+                          <div>
+                            <p>{role}</p>
+                            <p>{fullName}</p>
+                          </div>
+
+                          {admins.includes(_id) ? (
+                            <button
+                              onClick={() => removeAdmin(_id)}
+                              style={{ backgroundColor: "red" }}
+                            >
+                              Удалить
+                            </button>
+                          ) : (
+                            <button
+                              onClick={() => addAdmin(_id)}
+                              style={{ backgroundColor: "#009dff" }}
+                            >
+                              Добавить
+                            </button>
+                          )}
+                        </li>
+                      ))}
+                    </ul>
+                  )
+                )}
               </div>
 
               <Link

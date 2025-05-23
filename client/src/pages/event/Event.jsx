@@ -110,11 +110,13 @@ const Event = ({ userData }) => {
                         </button>
                       )}
 
-                      {/* {userData &&
-                        (["Администратор"].includes(userData.role) ||
+                      {userData &&
+                        (["Администратор", "зам. в.о."].includes(
+                          userData.role
+                        ) ||
                           event.admins.includes(userData._id)) && (
                           <Link to={`/admin-event/${id}`}>Управлять</Link>
-                        )} */}
+                        )}
                     </div>
                   </div>
                 </div>

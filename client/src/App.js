@@ -76,7 +76,7 @@ function App() {
                     path="/admin-directing/:id"
                     element={<AdminDirecting userData={userData} />}
                   />
-                  {(userData.role.toLowerCase() === "руководитель в.о." ||
+                  {(userData.role.toLowerCase() === "зам. в.о." ||
                     userData.role.toLowerCase() === "администратор") && (
                     <Route
                       path="create-directing"
@@ -84,14 +84,13 @@ function App() {
                     />
                   )}
 
-                  {(userData.role.toLowerCase() ===
-                    "руководитель направления" ||
-                    userData.role.toLowerCase() === "организатор" ||
-                    userData.role.toLowerCase() === "руководитель в.о." ||
+                  {(userData.role.toLowerCase() === "cотрудник в.о." ||
+                    userData.role.toLowerCase() === "руководитель с.о." ||
+                    userData.role.toLowerCase() === "зам. в.о." ||
                     userData.role.toLowerCase() === "администратор") && (
                     <React.Fragment>
                       <Route
-                        path="create-event"
+                        path="/create-event"
                         element={<CreateEvent userData={userData} />}
                       />
 

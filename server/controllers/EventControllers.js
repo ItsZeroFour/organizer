@@ -14,6 +14,7 @@ export const createEvent = async (req, res) => {
       contact_name,
       contact_email,
       contact_work,
+      admins,
     } = req.body;
 
     if (
@@ -161,6 +162,27 @@ export const getUserApplicationsFull = async (req, res) => {
     }
 
     return res.status(200).json(getEvent.userApplications);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({
+      message: "Не удалось получить участников",
+    });
+  }
+};
+
+export const getEventAdmins = async (req, res) => {
+  try {
+    const eventId = req.params.id;
+
+    const getAdmins = await EventModel.findById(eventId);
+
+    if (!getAdmins) {
+      return res.status(500).json({
+        message: "Не удалось найти ответственных за мероприятие",
+      });
+    }
+
+    return res.status(200).json(getAdmins.admins);
   } catch (err) {
     console.log(err);
     res.status(500).json({

@@ -116,6 +116,17 @@ const Directing = ({ userData }) => {
                           directing.admins.includes(userData._id)) && (
                           <Link to={`/admin-directing/${id}`}>Управлять</Link>
                         )}
+
+                      {(userData?.role?.toLowerCase() === "зам. в.о." ||
+                        userData?.role?.toLowerCase() === "администратор") && (
+                        <Link
+                          className={style.directing__head__excel}
+                          to={`${process.env.REACT_APP_SERVER_URL}/excel-direction/${id}`}
+                          target="_blank"
+                        >
+                          Скачать Excel
+                        </Link>
+                      )}
                     </div>
                   </div>
                 </div>

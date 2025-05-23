@@ -13,6 +13,15 @@ const CreateEvent = ({ userData }) => {
   const [dateFinish, setDateFinish] = useState("");
   const [timeStart, setTimeStart] = useState("");
   const [timeFinish, setTimeFinish] = useState("");
+  const [directing, setDirecting] = useState("");
+  const [place, setPlace] = useState("");
+  const [contact_name, setContact_name] = useState("");
+  const [contact_email, setContact_email] = useState("");
+  const [contact_work, setContact_work] = useState("");
+  const [loadingOrganizers, setLoadingOrganizers] = useState(false);
+  const [organizers, setOrganizers] = useState(null);
+
+  const [admins, setAdmins] = useState([]);
 
   const navigate = useNavigate();
 
@@ -28,6 +37,27 @@ const CreateEvent = ({ userData }) => {
       navigate("/");
     }
   }, [userData]);
+
+  useEffect(() => {
+    const getAllOrganizers = async () => {
+      try {
+        setLoadingOrganizers(true);
+
+        const getOrganizers = await axios.get(
+          `${process.env.REACT_APP_SERVER_URL}/directing/get-organizers`
+        );
+
+        setLoadingOrganizers(false);
+        setOrganizers(getOrganizers.data);
+      } catch (error) {
+        console.log(error);
+        setLoadingOrganizers(false);
+        alert(`Произошла ошибка: ${error.response.data.message}`);
+      }
+    };
+
+    getAllOrganizers();
+  }, []);
 
   const uploadImage = async (acceptedFiles, setImagePath) => {
     const formData = new FormData();
@@ -54,7 +84,7 @@ const CreateEvent = ({ userData }) => {
 
   const createEvent = async () => {
     try {
-      const directing = await axios.post(
+      const fetch = await axios.post(
         `${process.env.REACT_APP_SERVER_URL}/event/create`,
         {
           name: name,
@@ -62,17 +92,31 @@ const CreateEvent = ({ userData }) => {
           imagePath: mainImagePath,
           start: `${dateStart}, ${timeStart}`,
           finish: `${dateFinish}, ${timeFinish}`,
+          directing: directing,
+          place: place,
+          contact_name: contact_name,
+          contact_email: contact_email,
+          contact_work: contact_work,
+          admins: admins,
         }
       );
 
-      if (directing.status === 200) {
+      if (fetch.status === 200) {
         alert("Мероприятие успешно создано!");
         navigate("/events");
       }
     } catch (error) {
       console.log(error);
-      alert(`Произошла ошибка: ${error.response.data.message}`);
+      alert(`Произошла ошибка: ${error.response?.data?.message}`);
     }
+  };
+
+  const addAdmin = (id) => {
+    setAdmins((prevAdmins) => [...prevAdmins, id]);
+  };
+
+  const removeAdmin = (id) => {
+    setAdmins((prevAdmins) => prevAdmins.filter((adminId) => adminId !== id));
   };
 
   return (
@@ -85,11 +129,48 @@ const CreateEvent = ({ userData }) => {
             <input
               type="text"
               onChange={(event) => setName(event.target.value)}
+              value={name}
               placeholder="Название направления"
             />
             <textarea
               onChange={(event) => setDescription(event.target.value)}
+              value={description}
               placeholder="Описание"
+            />
+
+            <input
+              type="text"
+              onChange={(event) => setDirecting(event.target.value)}
+              value={directing}
+              placeholder="Направление (например, патриотическое)"
+            />
+
+            <input
+              type="text"
+              onChange={(event) => setPlace(event.target.value)}
+              value={place}
+              placeholder="Место проведения"
+            />
+
+            <input
+              type="text"
+              onChange={(event) => setContact_name(event.target.value)}
+              value={contact_name}
+              placeholder="Контактное имя"
+            />
+
+            <input
+              type="text"
+              onChange={(event) => setContact_email(event.target.value)}
+              value={contact_email}
+              placeholder="Контактный email"
+            />
+
+            <input
+              type="text"
+              onChange={(event) => setContact_work(event.target.value)}
+              value={contact_work}
+              placeholder="Контактное место работы"
             />
 
             <div>
@@ -152,6 +233,43 @@ const CreateEvent = ({ userData }) => {
                 </div>
               </label>
             </div>
+          </div>
+
+          <div className={style.create_direction__organizers}>
+            <p>Добавить ответственных</p>
+
+            {loadingOrganizers ? (
+              <p>Загрузка руководителей...</p>
+            ) : (
+              organizers && (
+                <ul>
+                  {organizers.map(({ fullName, role, _id }) => (
+                    <li key={_id}>
+                      <div>
+                        <p>{role}</p>
+                        <p>{fullName}</p>
+                      </div>
+
+                      {admins.includes(_id) ? (
+                        <button
+                          onClick={() => removeAdmin(_id)}
+                          style={{ backgroundColor: "red" }}
+                        >
+                          Удалить
+                        </button>
+                      ) : (
+                        <button
+                          onClick={() => addAdmin(_id)}
+                          style={{ backgroundColor: "#009dff" }}
+                        >
+                          Добавить
+                        </button>
+                      )}
+                    </li>
+                  ))}
+                </ul>
+              )
+            )}
           </div>
 
           <button onClick={createEvent}>Создать мероприятие</button>

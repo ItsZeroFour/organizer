@@ -75,23 +75,30 @@ const AdminDirecting = ({ userData }) => {
   }, []);
 
   useEffect(() => {
-    if (
-      userData?.role.toLowerCase() === "администратор" ||
-      (directing && userData && directing.admins.includes(userData._id))
-    ) {
-      if (directing) {
-        setName(directing.name);
-        setDescription(directing.description);
-        setSecondDescription(directing.secondDescription);
-        setAdmins(directing.admins);
-        setImagePath(directing.imagePath);
-        setSecondImagePath(directing.secondImagePath);
-        setGallery(directing.gallery);
-        setSkills(directing.skills);
-      }
-    } else {
-      navigate("/");
+    // Проверяем, загружены ли данные
+    if (!userData || !directing) {
+      return; // Ждем загрузки данных, ничего не делаем
     }
+
+    // Проверяем условия доступа
+    const isAdmin = userData.role?.toLowerCase() === "администратор";
+    const isDirectionAdmin = directing.admins?.includes(userData._id);
+
+    // Если пользователь не имеет прав доступа - перенаправляем
+    if (!isAdmin && !isDirectionAdmin) {
+      navigate("/");
+      return;
+    }
+
+    // Если есть права доступа - заполняем данные
+    setName(directing.name);
+    setDescription(directing.description);
+    setSecondDescription(directing.secondDescription);
+    setAdmins(directing.admins);
+    setImagePath(directing.imagePath);
+    setSecondImagePath(directing.secondImagePath);
+    setGallery(directing.gallery);
+    setSkills(directing.skills);
   }, [directing, userData, navigate]);
 
   useEffect(() => {
@@ -405,7 +412,7 @@ const AdminDirecting = ({ userData }) => {
                 </div>
 
                 <div className={style.admin_direction__people}>
-                  {(userData.role.toLowerCase() === "руководитель в.о." ||
+                  {(userData.role.toLowerCase() === "зам. в.о." ||
                     userData.role.toLowerCase() === "администратор") && (
                     <div className={style.create_direction__organizers}>
                       <p>Добавить руководителя</p>
@@ -447,48 +454,53 @@ const AdminDirecting = ({ userData }) => {
                     </div>
                   )}
 
-                  <div className={style.create_direction__organizers}>
-                    <p>Входящие заявки студентов</p>
+                  {directing?.admins?.includes(userData._id) &&
+                    (userData.role?.toLowerCase() === "администратор" ||
+                      userData.role?.toLowerCase() === "сотрудник в.о." ||
+                      userData.role?.toLowerCase() === "руководитель с.о.") && (
+                      <div className={style.create_direction__organizers}>
+                        <p>Входящие заявки студентов</p>
 
-                    {loadingStudens ? (
-                      <p>Загрузка студентов...</p>
-                    ) : (
-                      Array.isArray(applications) && (
-                        <ul>
-                          {applications.map(
-                            ({ fullName, role, _id, group }) => (
-                              <li key={_id}>
-                                <div>
-                                  <Link to={`/user/${_id}`}>
-                                    <p>{role}</p>
-                                    <p>
-                                      {fullName}. Группа: {group}
-                                    </p>
-                                  </Link>
-                                </div>
+                        {loadingStudens ? (
+                          <p>Загрузка студентов...</p>
+                        ) : (
+                          Array.isArray(applications) && (
+                            <ul>
+                              {applications.map(
+                                ({ fullName, role, _id, group }) => (
+                                  <li key={_id}>
+                                    <div>
+                                      <Link to={`/user/${_id}`}>
+                                        <p>{role}</p>
+                                        <p>
+                                          {fullName}. Группа: {group}
+                                        </p>
+                                      </Link>
+                                    </div>
 
-                                {members.includes(_id) ? (
-                                  <button
-                                    onClick={() => removeMember(_id)}
-                                    style={{ backgroundColor: "red" }}
-                                  >
-                                    Удалить
-                                  </button>
-                                ) : (
-                                  <button
-                                    onClick={() => addMember(_id)}
-                                    style={{ backgroundColor: "#009dff" }}
-                                  >
-                                    Добавить
-                                  </button>
-                                )}
-                              </li>
-                            )
-                          )}
-                        </ul>
-                      )
+                                    {members.includes(_id) ? (
+                                      <button
+                                        onClick={() => removeMember(_id)}
+                                        style={{ backgroundColor: "red" }}
+                                      >
+                                        Удалить
+                                      </button>
+                                    ) : (
+                                      <button
+                                        onClick={() => addMember(_id)}
+                                        style={{ backgroundColor: "#009dff" }}
+                                      >
+                                        Добавить
+                                      </button>
+                                    )}
+                                  </li>
+                                )
+                              )}
+                            </ul>
+                          )
+                        )}
+                      </div>
                     )}
-                  </div>
                 </div>
 
                 <div className={style.create_direction__organizers}>
@@ -523,12 +535,17 @@ const AdminDirecting = ({ userData }) => {
                   )}
                 </div>
 
-                <Link
-                  to={`${process.env.REACT_APP_SERVER_URL}/excel-direction/${id}`}
-                  target="_blank"
-                >
-                  Скачать Excel
-                </Link>
+                {directing?.admins?.includes(userData._id) &&
+                  (userData.role?.toLowerCase() === "администратор" ||
+                    userData.role?.toLowerCase() === "сотрудник в.о." ||
+                    userData.role?.toLowerCase() === "руководитель с.о.") && (
+                    <Link
+                      to={`${process.env.REACT_APP_SERVER_URL}/excel-direction/${id}`}
+                      target="_blank"
+                    >
+                      Скачать Excel
+                    </Link>
+                  )}
 
                 <button onClick={updateDirecting} disabled={saving}>
                   {saving ? "Сохранение..." : "Обновить"}
