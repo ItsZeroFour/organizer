@@ -406,3 +406,73 @@ export const addUserToUserApplications = async (req, res) => {
     });
   }
 };
+
+export const deleteEvent = async (req, res) => {
+  try {
+    const eventId = req.params.id;
+
+    const eventDelete = await EventModel.findByIdAndDelete(eventId);
+
+    if (!eventDelete) {
+      res.status(404).json({
+        message: "Не удалось удалить мероприятие",
+      });
+    }
+
+    return res.status(200).json({
+      message: "Мероприятие успешно удалено",
+    });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({
+      message: "Не удалось удалить мероприятие",
+    });
+  }
+};
+
+export const getAdminsEvents = async (req, res) => {
+  try {
+    const userId = req.params.id;
+
+    const events = await EventModel.find({ admins: userId });
+    res.status(200).json(events);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({
+      message: "Не удалось получить направления",
+    });
+  }
+};
+
+export const cancelApplication = async (req, res) => {
+  try {
+    const eventId = req.params.id;
+    const userId = req.userId;
+
+    // Находим направление и обновляем его, удаляя пользователя из applications
+    const updateEvent = await EventModel.findByIdAndUpdate(
+      eventId,
+      { $pull: { userApplications: userId } }, // Удаляем userId из массива applications
+      { $pull: { applications: userId } }, // Удаляем userId из массива applications
+      { new: true } // Возвращаем обновленный документ
+    );
+
+    if (!updateEvent) {
+      return res.status(404).json({
+        message: "Направление не найдено",
+      });
+    }
+
+    res.json({
+      message: "Заявка успешно отменена",
+      directing: updateEvent,
+    });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({
+      message: "Не удалось отменить заявку",
+    });
+  }
+};
+
+// git commit -m "update event and directing: add cancel application function, delete event and direction. And fix create event page"

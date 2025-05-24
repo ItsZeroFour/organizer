@@ -4,6 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import InputMask from "react-input-mask";
 import axios from "../../utils/axios";
 import AdminsDirecting from "../../components/account/AdminsDirecting";
+import AdminsEvents from "../../components/account/AdminsEvents";
 import StudentsDirecting from "../../components/account/StudentsDirectings";
 import StudentsApplications from "../../components/account/StudentsApplications";
 import StudentsEvents from "../../components/account/StudentsEvents";
@@ -148,6 +149,7 @@ const Account = ({ userData }) => {
           {userData.role !== "Студент" ? (
             <React.Fragment>
               <AdminsDirecting userId={userData._id} />
+              <AdminsEvents userId={userData._id} />
             </React.Fragment>
           ) : (
             <div className={style.account__list}>

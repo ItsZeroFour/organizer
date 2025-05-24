@@ -221,6 +221,25 @@ const AdminDirecting = ({ userData }) => {
     ]);
   };
 
+  const deleteDirection = async () => {
+    try {
+      const isDelete = window.confirm("Вы точно хотите удалить направление?");
+
+      if (!isDelete) return;
+
+      const response = await axios.delete(`/directing/delete/${id}`);
+
+      if (response.status === 200) {
+        alert("Успешно удалено!");
+        navigate("/");
+        return window.location.reload();
+      }
+    } catch (err) {
+      console.log(err);
+      alert("Не удалось удалить мероприятие");
+    }
+  };
+
   // const downloadExcelData = async () => {
   //   try {
   //     await axios.post(`${process.env.REACT_APP_SERVER_URL}/excel-direction/${id}`);
@@ -553,6 +572,8 @@ const AdminDirecting = ({ userData }) => {
                 <button onClick={updateDirecting} disabled={saving}>
                   {saving ? "Сохранение..." : "Обновить"}
                 </button>
+
+                <button onClick={deleteDirection}>Удалить мероприятие</button>
               </React.Fragment>
             )
           )}

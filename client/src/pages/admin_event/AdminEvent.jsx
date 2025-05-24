@@ -47,6 +47,8 @@ const AdminEvent = () => {
 
   const { id } = useParams();
 
+  const navigate = useNavigate();
+
   useEffect(() => {
     const getEvent = async () => {
       try {
@@ -264,6 +266,25 @@ const AdminEvent = () => {
 
     getAdmins();
   }, []);
+
+  const deleteEvent = async () => {
+    try {
+      const isDelete = window.confirm("Вы точно хотите удалить мероприятие?");
+
+      if (!isDelete) return;
+
+      const response = await axios.delete(`/event/delete/${id}`);
+
+      if (response.status === 200) {
+        alert("Успешно удалено!");
+        navigate("/");
+        return window.location.reload();
+      }
+    } catch (err) {
+      console.log(err);
+      alert("Не удалось удалить мероприятие");
+    }
+  };
 
   const onDropMain = (acceptedFiles) =>
     uploadImage(acceptedFiles, setImagePath);
@@ -641,6 +662,7 @@ const AdminEvent = () => {
               </Link>
 
               <button onClick={updateEvent}>Обновить</button>
+              <button onClick={deleteEvent}>Удалить мероприятие</button>
             </React.Fragment>
           )}
         </div>

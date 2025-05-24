@@ -5,7 +5,10 @@ import {
   addUserToApplications,
   addUserToMembers,
   addUserToUserApplications,
+  cancelApplication,
   createEvent,
+  deleteEvent,
+  getAdminsEvents,
   getAllEvents,
   getApplications,
   getEvent,
@@ -42,5 +45,8 @@ router.put(
   addUserToUserApplications
 );
 router.get("/get-admins/:id", checkAuth, getEventAdmins);
+router.delete("/delete/:id", checkAuth, deleteEvent);
+router.get("/get-admins-events/:id", checkAuth, getAdminsEvents);
+router.patch("/cancel-application/:id", checkAuth, cancelApplication);
 
 export default router;

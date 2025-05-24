@@ -74,6 +74,28 @@ const Event = ({ userData }) => {
     }
   };
 
+  const concelApplication = async () => {
+    try {
+      const isConfirm = window.confirm(
+        "Вы уверены что хотите отменить заявку?"
+      );
+
+      if (!isConfirm) return;
+
+      const response = await axios.patch(`/event/cancel-application/${id}`);
+
+      console.log(response);
+
+      if (response.status === 200) {
+        alert("Вы отменили заявку");
+        window.location.reload();
+      }
+    } catch (err) {
+      console.log(err);
+      alert("Не удалось отменить заявку");
+    }
+  };
+
   return (
     <div className={style.event}>
       <div className={style.event__wrapper}>
@@ -93,25 +115,37 @@ const Event = ({ userData }) => {
                       <p>{event.description}</p>
 
                       {userData && userData.role === "Студент" && (
-                        <button
-                          onClick={handleJoinEvent}
-                          disabled={
-                            event.userApplications.includes(userData._id) ||
-                            event.members.includes(userData._id) ||
-                            event.applications.includes(userData._id)
-                          }
-                        >
-                          {event.applications.includes(userData._id) ||
-                          event.userApplications.includes(userData._id)
-                            ? "Ожидание подтверждения"
-                            : event.members.includes(userData._id)
-                            ? "Вы уже записаны"
-                            : "Записаться"}
-                        </button>
+                        <React.Fragment>
+                          <button
+                            onClick={handleJoinEvent}
+                            disabled={
+                              event.userApplications.includes(userData._id) ||
+                              event.members.includes(userData._id) ||
+                              event.applications.includes(userData._id)
+                            }
+                          >
+                            {event.applications.includes(userData._id) ||
+                            event.userApplications.includes(userData._id)
+                              ? "Ожидание подтверждения"
+                              : event.members.includes(userData._id)
+                              ? "Вы уже записаны"
+                              : "Записаться"}
+                          </button>
+
+                          {(event.userApplications.includes(userData._id) ||
+                            event.applications.includes(userData._id)) && (
+                            <button
+                              onClick={concelApplication}
+                              style={{ background: "red" }}
+                            >
+                              Отменить заявку
+                            </button>
+                          )}
+                        </React.Fragment>
                       )}
 
                       {userData &&
-                        (["Администратор", "зам. в.о."].includes(
+                        (["Администратор", "Зам. в.о."].includes(
                           userData.role
                         ) ||
                           event.admins.includes(userData._id)) && (

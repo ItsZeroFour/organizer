@@ -75,6 +75,28 @@ const Directing = ({ userData }) => {
     getAdmins();
   }, []);
 
+  const concelApplication = async () => {
+    try {
+      const isConfirm = window.confirm(
+        "Вы уверены что хотите отменить заявку?"
+      );
+
+      if (!isConfirm) return;
+
+      const response = await axios.patch(`/directing/cancel-application/${id}`);
+
+      console.log(response);
+
+      if (response.status === 200) {
+        alert("Вы отменили заявку");
+        window.location.reload();
+      }
+    } catch (err) {
+      console.log(err);
+      alert("Не удалось отменить заявку");
+    }
+  };
+
   return (
     <div className={style.directing}>
       <div className={style.directing__wrapper}>
@@ -96,19 +118,30 @@ const Directing = ({ userData }) => {
                       <p>{directing.description}</p>
 
                       {userData?.role === "Студент" && (
-                        <button
-                          onClick={addUserToApplications}
-                          disabled={
-                            directing.applications.includes(userData._id) ||
-                            directing.members.includes(userData._id)
-                          }
-                        >
-                          {directing.applications.includes(userData._id)
-                            ? "Ожидание подтверждения"
-                            : directing.members.includes(userData._id)
-                            ? "Вы уже записаны"
-                            : "Записаться"}
-                        </button>
+                        <React.Fragment>
+                          <button
+                            onClick={addUserToApplications}
+                            disabled={
+                              directing.applications.includes(userData._id) ||
+                              directing.members.includes(userData._id)
+                            }
+                          >
+                            {directing.applications.includes(userData._id)
+                              ? "Ожидание подтверждения"
+                              : directing.members.includes(userData._id)
+                              ? "Вы уже записаны"
+                              : "Записаться"}
+                          </button>
+
+                          {directing.applications.includes(userData._id) && (
+                            <button
+                              onClick={concelApplication}
+                              style={{ background: "red" }}
+                            >
+                              Отменить заявку
+                            </button>
+                          )}
+                        </React.Fragment>
                       )}
 
                       {userData &&

@@ -48,10 +48,7 @@ export const getAllOrganizers = async (req, res) => {
   try {
     const organizers = await UserModel.find({
       role: {
-        $in: [
-          "Сотрудник в.о.",
-          "Администратор",
-        ],
+        $in: ["Сотрудник в.о.", "Администратор"],
       },
     });
     res.status(200).json(organizers);
@@ -275,6 +272,59 @@ export const getDirectingAdmins = async (req, res) => {
     console.log(err);
     res.status(500).json({
       message: "Не удалось получить руководителей",
+    });
+  }
+};
+
+export const cancelApplication = async (req, res) => {
+  try {
+    const directingId = req.params.id;
+    const userId = req.userId;
+
+    // Находим направление и обновляем его, удаляя пользователя из applications
+    const updatedDirecting = await DirectingModel.findByIdAndUpdate(
+      directingId,
+      { $pull: { applications: userId } }, // Удаляем userId из массива applications
+      { new: true } // Возвращаем обновленный документ
+    );
+
+    if (!updatedDirecting) {
+      return res.status(404).json({
+        message: "Направление не найдено",
+      });
+    }
+
+    res.json({
+      message: "Заявка успешно отменена",
+      directing: updatedDirecting,
+    });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({
+      message: "Не удалось отменить заявку",
+    });
+  }
+};
+
+export const deleteDirection = async (req, res) => {
+  try {
+    const directionId = req.params.id;
+
+    const directionDelete = await DirectingModel.findByIdAndDelete(directionId);
+
+    if (!directionDelete) {
+      res.status(404).json({
+        message: "Не удалось удалить мероприятие",
+      });
+    }
+
+    return res.status(200).json({
+      message: "Мероприятие успешно удалено",
+    });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({
+      message: "Не удалось удалить мероприятие",
     });
   }
 };

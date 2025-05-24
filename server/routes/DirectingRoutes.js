@@ -2,7 +2,9 @@ import express from "express";
 import checkAuth from "../utils/checkAuth.js";
 import {
   addUserToApplications,
+  cancelApplication,
   createDirecting,
+  deleteDirection,
   getAdminsDirecting,
   getAllDirecting,
   getAllOrganizers,
@@ -27,5 +29,7 @@ router.put("/add-to-applications/:id", checkAuth, addUserToApplications);
 router.get("/get-applications/:id", checkAuth, getUsersFromApplications);
 router.get("/get-members/:id", checkAuth, getUsersFromMembers);
 router.get("/get-admins/:id", getDirectingAdmins);
+router.patch("/cancel-application/:id", checkAuth, cancelApplication);
+router.delete("/delete/:id", checkAuth, deleteDirection);
 
 export default router;

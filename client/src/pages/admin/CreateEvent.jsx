@@ -28,9 +28,8 @@ const CreateEvent = ({ userData }) => {
   useEffect(() => {
     if (
       !(
-        userData.role.toLowerCase() === "руководитель направления" ||
-        userData.role.toLowerCase() === "организатор" ||
-        userData.role.toLowerCase() === "руководитель в.о." ||
+        userData.role.toLowerCase() === "зам. в.о." ||
+        userData.role.toLowerCase() === "сотрудник в.о." ||
         userData.role.toLowerCase() === "администратор"
       )
     ) {
