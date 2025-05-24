@@ -83,6 +83,10 @@ const CreateEvent = ({ userData }) => {
 
   const createEvent = async () => {
     try {
+      if (admins.length === 0) {
+        return alert("Должен быть хотя бы 1 ответственный");
+      }
+
       const fetch = await axios.post(
         `${process.env.REACT_APP_SERVER_URL}/event/create`,
         {

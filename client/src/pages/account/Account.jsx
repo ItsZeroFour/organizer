@@ -7,6 +7,8 @@ import AdminsDirecting from "../../components/account/AdminsDirecting";
 import AdminsEvents from "../../components/account/AdminsEvents";
 import StudentsDirecting from "../../components/account/StudentsDirectings";
 import StudentsApplications from "../../components/account/StudentsApplications";
+import StudentsApplications2 from "../../components/account/StudentsApplications2";
+import StudentsApplications3 from "../../components/account/StudentsApplications3";
 import StudentsEvents from "../../components/account/StudentsEvents";
 
 const Account = ({ userData }) => {
@@ -156,6 +158,15 @@ const Account = ({ userData }) => {
               <div>
                 <StudentsDirecting userId={userData._id} />
                 <StudentsApplications
+                  userData={userData}
+                  userId={userData._id}
+                />
+                <StudentsApplications2
+                  userData={userData}
+                  userId={userData._id}
+                />
+
+                <StudentsApplications3
                   userData={userData}
                   userId={userData._id}
                 />

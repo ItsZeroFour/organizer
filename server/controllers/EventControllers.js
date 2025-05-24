@@ -262,6 +262,48 @@ export const addUserToMembers = async (req, res) => {
   }
 };
 
+export const cancelUserFromApplications = async (req, res) => {
+  try {
+    const eventId = req.body.eventId;
+    const userId = req.body.userId;
+
+    const event = await EventModel.findById(eventId);
+
+    if (!event) {
+      return res.status(404).json({
+        message: "Событие не найдено",
+      });
+    }
+
+    // Проверяем, есть ли пользователь в списке заявок
+    const userIndex = event.applications.findIndex(
+      (id) => id.toString() === userId.toString()
+    );
+
+    if (userIndex === -1) {
+      return res.status(400).json({
+        message: "Пользователь не найден в списке заявок",
+      });
+    }
+
+    // Удаляем userId из массива applications
+    event.applications = event.applications.filter(
+      (id) => id.toString() !== userId.toString()
+    );
+
+    await event.save();
+
+    return res.status(200).json({
+      message: "Пользователь успешно удален из списка заявок",
+    });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({
+      message: "Не удалось удалить пользователя из списка заявок",
+    });
+  }
+};
+
 export const updateEvent = async (req, res) => {
   try {
     const eventId = req.params.id;
@@ -342,7 +384,29 @@ export const getUserApplications = async (req, res) => {
       applications: userId,
     });
 
-    if (!events.length) {
+    if (!events) {
+      return res.status(404).json({
+        message: "Приглашения не найдены",
+      });
+    }
+
+    return res.status(200).json(events);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({
+      message: "Не удалось получить приглашения",
+    });
+  }
+};
+
+export const getUserApplications2 = async (req, res) => {
+  try {
+    const userId = req.userId;
+    const events = await EventModel.find({
+      userApplications: userId,
+    });
+
+    if (!events) {
       return res.status(404).json({
         message: "Приглашения не найдены",
       });
@@ -452,8 +516,12 @@ export const cancelApplication = async (req, res) => {
     // Находим направление и обновляем его, удаляя пользователя из applications
     const updateEvent = await EventModel.findByIdAndUpdate(
       eventId,
-      { $pull: { userApplications: userId } }, // Удаляем userId из массива applications
-      { $pull: { applications: userId } }, // Удаляем userId из массива applications
+      {
+        $pull: {
+          userApplications: userId,
+          applications: userId,
+        },
+      },
       { new: true } // Возвращаем обновленный документ
     );
 
@@ -474,5 +542,3 @@ export const cancelApplication = async (req, res) => {
     });
   }
 };
-
-// git commit -m "update event and directing: add cancel application function, delete event and direction. And fix create event page"

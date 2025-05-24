@@ -12,62 +12,41 @@ const StudentsApplications = ({ userData }) => {
       try {
         setLoadingApplications(true);
         const response = await axios.get(
-          `${process.env.REACT_APP_SERVER_URL}/event/get-user-applications`
+          `${process.env.REACT_APP_SERVER_URL}/event/get-user-applications2`
         );
         setLoadingApplications(false);
+
+        console.log(response);
 
         if (response.status === 200) {
           setApplications(response.data);
         }
       } catch (error) {
         setLoadingApplications(false);
-        alert(`Произошла ошибка: ${error?.response?.data.message}`);
+        alert(`Произошла ошибка: ${error.response.data.message}`);
       }
     };
 
     getStudentApplications();
   }, []);
 
-  const accept = async (eventId) => {
+  const concelApplication = async (_id) => {
     try {
-      const response = await axios.put(
-        `${process.env.REACT_APP_SERVER_URL}/event/add-to-members`,
-        {
-          eventId: eventId,
-          userId: userData._id,
-        }
+      const isConfirm = window.confirm(
+        "Вы уверены что хотите отменить заявку?"
       );
 
-      if (response.status === 200) {
-        alert("Приглашение успешно принято!");
-        window.location.reload();
-      } else {
-        alert("Не удалось принять приглашение");
-      }
-    } catch (error) {
-      alert(`Произошла ошибка: ${error?.response?.data.message}`);
-      console.error("Ошибка загрузки файла:", error);
-    }
-  };
+      if (!isConfirm) return;
 
-  const cancel = async (eventId) => {
-    try {
-      const response = await axios.put(
-        `${process.env.REACT_APP_SERVER_URL}/event/cancel-from-applications`,
-        {
-          eventId: eventId,
-          userId: userData._id,
-        }
-      );
+      const response = await axios.patch(`/event/cancel-application/${_id}`);
 
       if (response.status === 200) {
-        alert("Приглашение успешно отклонено!");
+        alert("Вы отменили заявку");
         window.location.reload();
-      } else {
-        alert("Не удалось отклонить приглашение");
       }
-    } catch (error) {
-      alert(`Произошла ошибка: ${error?.response?.data.message}`);
+    } catch (err) {
+      console.log(err);
+      alert("Не удалось отменить заявку");
     }
   };
 
@@ -77,7 +56,7 @@ const StudentsApplications = ({ userData }) => {
         <div
           className={`${style.admins_directing__wrapper} ${style.admins_directing__wrapper_2}`}
         >
-          <h3>Вас пригласили:</h3>
+          <h3>Вы подали заявку на мероприятия:</h3>
           {loadingApplications ? (
             <p>Загрузка мероприятий...</p>
           ) : (
@@ -99,12 +78,11 @@ const StudentsApplications = ({ userData }) => {
                         </p>
                       </Link>
 
-                      <button onClick={() => accept(_id)}>Принять</button>
                       <button
                         style={{ background: "red" }}
-                        onClick={() => cancel(_id)}
+                        onClick={() => concelApplication(_id)}
                       >
-                        Отклонить
+                        Отменить
                       </button>
                     </li>
                   )

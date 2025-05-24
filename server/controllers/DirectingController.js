@@ -328,3 +328,25 @@ export const deleteDirection = async (req, res) => {
     });
   }
 };
+
+export const getUserApplications3 = async (req, res) => {
+  try {
+    const userId = req.userId;
+    const events = await DirectingModel.find({
+      applications: userId,
+    });
+
+    if (!events) {
+      return res.status(404).json({
+        message: "Приглашения не найдены",
+      });
+    }
+
+    return res.status(200).json(events);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({
+      message: "Не удалось получить приглашения",
+    });
+  }
+};

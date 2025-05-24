@@ -11,6 +11,7 @@ import {
   getDirecting,
   getDirectingAdmins,
   getStudentsDirecting,
+  getUserApplications3,
   getUsersFromApplications,
   getUsersFromMembers,
   updateDirecting,
@@ -31,5 +32,6 @@ router.get("/get-members/:id", checkAuth, getUsersFromMembers);
 router.get("/get-admins/:id", getDirectingAdmins);
 router.patch("/cancel-application/:id", checkAuth, cancelApplication);
 router.delete("/delete/:id", checkAuth, deleteDirection);
+router.get("/get-user-applications3", checkAuth, getUserApplications3);
 
 export default router;

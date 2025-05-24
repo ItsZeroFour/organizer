@@ -84,11 +84,24 @@ const Event = ({ userData }) => {
 
       const response = await axios.patch(`/event/cancel-application/${id}`);
 
-      console.log(response);
-
       if (response.status === 200) {
         alert("Вы отменили заявку");
-        window.location.reload();
+        console.log(123);
+
+        // window.location.reload();
+      } else {
+        const response = await axios.put(
+          `${process.env.REACT_APP_SERVER_URL}/event/cancel-from-applications`,
+          {
+            eventId: id,
+            userId: userData._id,
+          }
+        );
+
+        if (response.status === 200) {
+          alert("Вы отменили заявку");
+          window.location.reload();
+        }
       }
     } catch (err) {
       console.log(err);

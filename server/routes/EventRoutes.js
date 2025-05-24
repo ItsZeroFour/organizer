@@ -6,6 +6,7 @@ import {
   addUserToMembers,
   addUserToUserApplications,
   cancelApplication,
+  cancelUserFromApplications,
   createEvent,
   deleteEvent,
   getAdminsEvents,
@@ -16,6 +17,7 @@ import {
   getMembers,
   getStudents,
   getUserApplications,
+  getUserApplications2,
   getUserApplicationsFull,
   getUserEvents,
   updateEvent,
@@ -32,6 +34,7 @@ router.get("/get-applications/:id", getApplications);
 router.put("/add-to-applications", checkAuth, addUserToApplications);
 router.get("/get-students/:id", getStudents);
 router.get("/get-user-applications", checkAuth, getUserApplications);
+router.get("/get-user-applications2", checkAuth, getUserApplications2);
 router.get(
   "/get-user-applications-full/:id",
   checkAuth,
@@ -39,6 +42,7 @@ router.get(
 );
 router.get("/get-user-events/:id", checkAuth, getUserEvents);
 router.put("/add-to-members", checkAuth, addUserToMembers);
+router.put("/cancel-from-applications", checkAuth, cancelUserFromApplications);
 router.put(
   "/add-to-userapplications/:eventId",
   checkAuth,
