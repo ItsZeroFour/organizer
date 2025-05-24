@@ -84,8 +84,7 @@ function App() {
                     />
                   )}
 
-                  {(userData.role.toLowerCase() === "cотрудник в.о." ||
-                    userData.role.toLowerCase() === "руководитель с.о." ||
+                  {(userData.role.toLowerCase() === "сотрудник в.о." ||
                     userData.role.toLowerCase() === "зам. в.о." ||
                     userData.role.toLowerCase() === "администратор") && (
                     <React.Fragment>

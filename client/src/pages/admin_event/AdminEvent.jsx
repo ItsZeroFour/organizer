@@ -34,9 +34,16 @@ const AdminEvent = () => {
     useState(false);
 
   const [loadingAdmins, setLoadingAdmins] = useState(false);
-  const [admins, setAdmins] = useState([]);
-  const [organizers, setOrganizers] = useState(null);
+
+  const [directing, setDirecting] = useState("");
+  const [place, setPlace] = useState("");
+  const [contact_name, setContact_name] = useState("");
+  const [contact_email, setContact_email] = useState("");
+  const [contact_work, setContact_work] = useState("");
   const [loadingOrganizers, setLoadingOrganizers] = useState(false);
+  const [organizers, setOrganizers] = useState(null);
+
+  const [admins, setAdmins] = useState([]);
 
   const { id } = useParams();
 
@@ -55,6 +62,12 @@ const AdminEvent = () => {
           setImagePath(response.data.imagePath);
           setDescription(response.data.description);
           setUserApplications(response.data.userApplications);
+
+          setDirecting(response.data.directing);
+          setPlace(response.data.place);
+          setContact_name(response.data.contact_name);
+          setContact_email(response.data.contact_email);
+          setContact_work(response.data.contact_work);
 
           const [startDate, startTime] = response.data.start.split(", ");
           setStartDate(startDate);
@@ -324,6 +337,41 @@ const AdminEvent = () => {
                   value={description}
                   onChange={(event) => setDescription(event.target.value)}
                   placeholder="Описание"
+                />
+
+                <input
+                  type="text"
+                  onChange={(event) => setDirecting(event.target.value)}
+                  value={directing}
+                  placeholder="Направление (например, патриотическое)"
+                />
+
+                <input
+                  type="text"
+                  onChange={(event) => setPlace(event.target.value)}
+                  value={place}
+                  placeholder="Место проведения"
+                />
+
+                <input
+                  type="text"
+                  onChange={(event) => setContact_name(event.target.value)}
+                  value={contact_name}
+                  placeholder="Контактное имя"
+                />
+
+                <input
+                  type="text"
+                  onChange={(event) => setContact_email(event.target.value)}
+                  value={contact_email}
+                  placeholder="Контактный email"
+                />
+
+                <input
+                  type="text"
+                  onChange={(event) => setContact_work(event.target.value)}
+                  value={contact_work}
+                  placeholder="Контактное место работы"
                 />
 
                 <div>

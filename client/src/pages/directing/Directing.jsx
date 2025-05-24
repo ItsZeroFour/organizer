@@ -112,7 +112,9 @@ const Directing = ({ userData }) => {
                       )}
 
                       {userData &&
-                        (["Администратор"].includes(userData.role) ||
+                        (["Администратор", "Зам. в.о."].includes(
+                          userData.role
+                        ) ||
                           directing.admins.includes(userData._id)) && (
                           <Link to={`/admin-directing/${id}`}>Управлять</Link>
                         )}

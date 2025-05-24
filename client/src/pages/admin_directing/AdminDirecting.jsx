@@ -81,7 +81,9 @@ const AdminDirecting = ({ userData }) => {
     }
 
     // Проверяем условия доступа
-    const isAdmin = userData.role?.toLowerCase() === "администратор";
+    const isAdmin =
+      userData.role?.toLowerCase() === "администратор" ||
+      userData.role?.toLowerCase() === "зам. в.о.";
     const isDirectionAdmin = directing.admins?.includes(userData._id);
 
     // Если пользователь не имеет прав доступа - перенаправляем
@@ -294,6 +296,7 @@ const AdminDirecting = ({ userData }) => {
             directing &&
             userData &&
             (userData?.role.toLowerCase() === "администратор" ||
+              userData?.role.toLowerCase() === "зам. в.о." ||
               directing.admins.includes(userData._id)) && (
               <React.Fragment>
                 <form>
