@@ -42,7 +42,6 @@ const StudentsApplications = ({ userData }) => {
         `/directing/cancel-application/${_id}`
       );
 
-
       if (response.status === 200) {
         alert("Вы отменили заявку");
         window.location.reload();
@@ -68,7 +67,7 @@ const StudentsApplications = ({ userData }) => {
                 {applications.map(
                   ({ name, description, _id, start, finish }) => (
                     <li key={_id}>
-                      <Link to={`/event/${_id}`}>
+                      <Link to={`/directing/${_id}`}>
                         <h3>{name}</h3>
                         <p>
                           {description.length > 200
