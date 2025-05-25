@@ -167,65 +167,72 @@ const Directing = ({ userData }) => {
                 </div>
               </div>
 
-              <div className={style.directing__about}>
-                <div className="container">
-                  <div className={style.directing__about__wrapper}>
-                    <div className={style.directing__about__text}>
-                      <h3>О направлении</h3>
-                      <p>{directing.secondDescription}</p>
-                    </div>
+              <div className="container">
+                <div className={style.directing__content}>
+                  <div className={style.directing__about}>
+                    <div className="container">
+                      <div className={style.directing__about__wrapper}>
+                        <div className={style.directing__about__text}>
+                          <h3>О студенческом объединении</h3>
+                        </div>
 
-                    <img
-                      src={`${process.env.REACT_APP_SERVER_URL}${directing.secondImagePath}`}
-                      alt="second image"
-                    />
-                  </div>
+                        <div className={style.directing__about__content}>
+                          <p>{directing.secondDescription}</p>
 
-                  <div className={style.directing__admins}>
-                    <h2>Руководители направления:</h2>
-
-                    {adminsLoading
-                      ? "Загрузка..."
-                      : admins && (
-                          <ul>
-                            {admins.map((item) => (
-                              <li key={item._id}>
-                                <Link to={`/user/${item._id}`}>
-                                  <h3>{item.fullName}</h3>
-                                </Link>
-                              </li>
-                            ))}
-                          </ul>
-                        )}
-                  </div>
-
-                  <div className={style.directing__skills}>
-                    <h3>Навыки:</h3>
-
-                    <ol>
-                      {directing.skills.map((item, index) => (
-                        <li key={index}>{item}</li>
-                      ))}
-                    </ol>
-                  </div>
-                </div>
-              </div>
-
-              <div className={style.directing__gallery}>
-                <div className="container">
-                  <div className={style.directing__gallery__wrapper}>
-                    <h3>Галлерея</h3>
-
-                    <ul>
-                      {directing.gallery.map((imagePath) => (
-                        <li key={imagePath}>
                           <img
-                            src={`${process.env.REACT_APP_SERVER_URL}${imagePath}`}
-                            alt="image"
+                            src={`${process.env.REACT_APP_SERVER_URL}${directing.secondImagePath}`}
+                            alt="second image"
                           />
-                        </li>
-                      ))}
-                    </ul>
+                        </div>
+                      </div>
+
+                      <div className={style.directing__admins}>
+                        <h2>Руководители студенческого объединения:</h2>
+
+                        {adminsLoading
+                          ? "Загрузка..."
+                          : admins && (
+                              <ul>
+                                {admins.map((item) => (
+                                  <li key={item._id}>
+                                    <Link to={`/user/${item._id}`}>
+                                      <h3>{item.fullName}</h3>
+                                    </Link>
+                                  </li>
+                                ))}
+                              </ul>
+                            )}
+                      </div>
+
+                      <div className={style.directing__skills}>
+                        <h3>Навыки:</h3>
+
+                        <ol>
+                          {directing.skills.map((item, index) => (
+                            <li key={index}>{item}</li>
+                          ))}
+                        </ol>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className={style.directing__gallery}>
+                    <div className="container">
+                      <div className={style.directing__gallery__wrapper}>
+                        <h3>Галлерея</h3>
+
+                        <ul>
+                          {directing.gallery.map((imagePath) => (
+                            <li key={imagePath}>
+                              <img
+                                src={`${process.env.REACT_APP_SERVER_URL}${imagePath}`}
+                                alt="image"
+                              />
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>

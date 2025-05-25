@@ -15,9 +15,16 @@
       align-items: center;
       gap: 10px;
 
-      font-size: 24px;
-      font-family: "Montserrat-md", sans-serif;
-      font-weight: 500;
+      font-size: 18px;
+      font-family: "Montserrat-bd", sans-serif;
+      font-weight: 700;
+
+      p {
+        width: 50%;
+        text-align: center;
+        color: #0b1d57;
+        text-transform: uppercase;
+      }
     }
 
     &:last-child {
@@ -35,7 +42,11 @@
 
       li {
         a {
-          color: var(--color-blue);
+          font-size: 14px;
+          color: #383838;
+          font-weight: 500;
+          font-family: "Montserrat-md", sans-serif;
+          text-transform: uppercase;
 
           &:hover {
             text-decoration: underline;
@@ -50,4 +61,7 @@
   display: flex;
   align-items: center;
   gap: 10px;
+  color: #0b1d57;
+  font-weight: 500;
+  font-family: "Montserrat-md", sans-serif;
 }

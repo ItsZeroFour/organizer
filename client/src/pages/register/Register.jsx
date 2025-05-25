@@ -39,7 +39,9 @@ const Register = () => {
         window.location.reload();
       }
     } catch (error) {
-      alert(`Произошла ошибка: ${error.response?.data?.message || error.message}`);
+      alert(
+        `Произошла ошибка: ${error.response?.data?.message || error.message}`
+      );
       console.error(error);
     }
   };
@@ -48,39 +50,40 @@ const Register = () => {
     <section className={style.register}>
       <div className="container">
         <div className={style.register__wrapper}>
-          <h1>ЗАРЕГИСТРИРОВАТЬСЯ</h1>
+          <div className={style.register__content}>
+            <h1>ЗАРЕГИСТРИРОВАТЬСЯ</h1>
 
-          <form onSubmit={submitForm}>
-            <input
-              type="text"
-              name="fullName"
-              value={formData.fullName}
-              onChange={handleChange}
-              placeholder="ФИО"
-            />
+            <form onSubmit={submitForm}>
+              <input
+                type="text"
+                name="fullName"
+                value={formData.fullName}
+                onChange={handleChange}
+                placeholder="ФИО"
+              />
 
-            <input
-              type="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              placeholder="E-mail"
-            />
-            <input
-              type="password"
-              name="password"
-              value={formData.password}
-              onChange={handleChange}
-              placeholder="Пароль"
-            />
-            <button type="submit">Зарегистрироваться</button>
-          </form>
+              <input
+                type="email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                placeholder="E-mail"
+              />
+              <input
+                type="password"
+                name="password"
+                value={formData.password}
+                onChange={handleChange}
+                placeholder="Пароль"
+              />
+              <button type="submit">Зарегистрироваться</button>
+            </form>
+          </div>
 
           <div className={style.signin__links}>
             <p>
               Уже есть аккаунт? <Link to="/signin">Войти</Link>
             </p>
-            <Link to="/forgot-password">Забыли пароль?</Link>
           </div>
         </div>
       </div>

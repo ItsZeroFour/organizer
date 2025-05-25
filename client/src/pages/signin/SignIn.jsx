@@ -34,7 +34,9 @@ const SignIn = () => {
         window.location.reload();
       }
     } catch (error) {
-      alert(`Произошла ошибка: ${error.response?.data?.message || error.message}`);
+      alert(
+        `Произошла ошибка: ${error.response?.data?.message || error.message}`
+      );
       console.error(error);
     }
   };
@@ -43,31 +45,31 @@ const SignIn = () => {
     <section className={style.signin}>
       <div className="container">
         <div className={style.signin__wrapper}>
-          <h1>ВОЙТИ</h1>
+          <div className={style.signin__content}>
+            <h1>Авторизация</h1>
 
-          <form onSubmit={submitForm}>
-            <input
-              type="email"
-              name="email"
-              value={credentials.email}
-              onChange={handleChange}
-              placeholder="E-mail"
-            />
-            <input
-              type="password"
-              name="password"
-              value={credentials.password}
-              onChange={handleChange}
-              placeholder="Пароль"
-            />
-            <button type="submit">Войти</button>
-          </form>
+            <form onSubmit={submitForm}>
+              <input
+                type="email"
+                name="email"
+                value={credentials.email}
+                onChange={handleChange}
+                placeholder="E-mail"
+              />
+              <input
+                type="password"
+                name="password"
+                value={credentials.password}
+                onChange={handleChange}
+                placeholder="Пароль"
+              />
+              <button type="submit">Войти</button>
+            </form>
+          </div>
 
           <div className={style.signin__links}>
-            <p>
-              Нет аккаунта? <Link to="/register">Зарегистрироваться</Link>
-            </p>
-            <Link to="/forgot-password">Забыли пароль?</Link>
+            <Link to="/register">Нет аккаунта в системе?</Link>
+            {/* <Link to="/forgot-password">Забыли пароль?</Link> */}
           </div>
         </div>
       </div>

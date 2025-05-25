@@ -96,7 +96,7 @@ const UserAccount = () => {
                     )}
                   </div>
 
-                  <button
+                  {/* <button
                     onClick={() => {
                       window.location.reload();
                       navigate("/");
@@ -104,7 +104,7 @@ const UserAccount = () => {
                     }}
                   >
                     Выйти
-                  </button>
+                  </button> */}
                 </div>
 
                 {user.role !== "Студент" ? (

@@ -52,7 +52,7 @@ function App() {
             <p>Загрузка...</p>
           ) : (
             <Routes>
-              <Route path="/" element={<Main />} />
+              <Route path="/" element={<Main userData={userData} />} />
               <Route path="/signin" element={<SignIn />} />
               <Route path="/register" element={<Register />} />
               <Route path="/user/:id" element={<UserAccount />} />
@@ -64,7 +64,7 @@ function App() {
                 path="/event/:id"
                 element={<Event userData={userData} />}
               />
-              <Route path="/events" element={<Events />} />
+              <Route path="/events" element={<Events userData={userData} />} />
 
               {userData && (
                 <>

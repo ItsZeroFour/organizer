@@ -3,25 +3,46 @@ import style from "./style.module.scss";
 import { Link } from "react-router-dom";
 import logo from "../../assets/logo.png";
 import user from "../../assets/user.svg";
+import { NavLink } from "react-router-dom";
 
 const Header = ({ userData }) => {
+  const shortenName = (fullName) => {
+    if (!fullName) return "";
+    const parts = fullName.trim().split(" ");
+    if (parts.length < 2) return fullName;
+    const [lastName, firstName, patronymic] = parts;
+    const firstInitial = firstName ? firstName[0].toUpperCase() + "." : "";
+    const patronymicInitial = patronymic
+      ? patronymic[0].toUpperCase() + "."
+      : "";
+    return `${lastName} ${firstInitial} ${patronymicInitial}`.trim();
+  };
+
   return (
     <header className={style.header}>
       <div className="container">
         <div className={style.header__wrapper}>
           <Link to="/">
             <img src={logo} alt="logo" />
-            внеучебная деятельность ИАТ
+            <p>внеучебная деятельность ИАТ</p>
           </Link>
 
           <nav>
             <ul>
               <li>
-                <Link to="/">Направления</Link>
+                <NavLink to="/" exact activeClassName="active">
+                  Студенческие объединения
+                </NavLink>
               </li>
-
               <li>
-                <Link to="/events">Мероприятия</Link>
+                <NavLink to="/events" activeClassName="active">
+                  Мероприятия
+                </NavLink>
+              </li>
+              <li>
+                <NavLink to="/contacts" activeClassName="active">
+                  Контакты
+                </NavLink>
               </li>
             </ul>
           </nav>
@@ -31,7 +52,7 @@ const Header = ({ userData }) => {
           ) : (
             <div className={style.header__user}>
               <Link to="/account">
-                <img src={user} alt="user" /> {userData.fullName}
+                <img src={user} alt="user" /> {shortenName(userData.fullName)}
               </Link>
             </div>
           )}
