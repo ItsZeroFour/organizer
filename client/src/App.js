@@ -14,6 +14,7 @@ import CreateEvent from "./pages/admin/CreateEvent";
 import Event from "./pages/event/Event";
 import Events from "./pages/events/Events";
 import AdminEvent from "./pages/admin_event/AdminEvent";
+import Contacts from "./pages/contacts/Contacts";
 
 function App() {
   const [findUserProcess, setFindUserProcess] = useState(false);
@@ -60,6 +61,7 @@ function App() {
                 path="/directing/:id"
                 element={<Directing userData={userData} />}
               />
+              <Route path="/contacts" element={<Contacts />} />
               <Route
                 path="/event/:id"
                 element={<Event userData={userData} />}

@@ -148,11 +148,11 @@ const Events = ({ userData }) => {
             : events && (
                 <React.Fragment>
                   <div className={style.events__link}>
-                    {(userData.role.toLowerCase() === "сотрудник в.о." ||
-                      userData.role.toLowerCase() === "руководитель с.о." ||
-                      userData.role.toLowerCase() === "зам. в.о." ||
-                      userData.role.toLowerCase() === "руководитель в.о." ||
-                      userData.role.toLowerCase() === "администратор") && (
+                    {(userData?.role?.toLowerCase() === "сотрудник в.о." ||
+                      userData?.role?.toLowerCase() === "руководитель с.о." ||
+                      userData?.role?.toLowerCase() === "зам. в.о." ||
+                      userData?.role?.toLowerCase() === "руководитель в.о." ||
+                      userData?.role?.toLowerCase() === "администратор") && (
                       <Link to="/create-event">Создание мероприятия</Link>
                     )}
                   </div>
