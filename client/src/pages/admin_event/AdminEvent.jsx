@@ -45,6 +45,8 @@ const AdminEvent = () => {
 
   const [admins, setAdmins] = useState([]);
 
+  const [showPageIndex, setShowPageIndex] = useState(0);
+
   const { id } = useParams();
 
   const navigate = useNavigate();
@@ -342,330 +344,390 @@ const AdminEvent = () => {
   return (
     <section className={style.admin_event}>
       <div className="container">
-        <div className={style.admin_event__wrapper}>
-          {loadingEvent ? (
-            <p>Загрузка...</p>
-          ) : (
-            <React.Fragment>
-              <form>
-                <input
-                  type="text"
-                  value={name}
-                  onChange={(event) => setName(event.target.value)}
-                  placeholder="Название направления"
-                />
-                <textarea
-                  value={description}
-                  onChange={(event) => setDescription(event.target.value)}
-                  placeholder="Описание"
-                />
-
-                <input
-                  type="text"
-                  onChange={(event) => setDirecting(event.target.value)}
-                  value={directing}
-                  placeholder="Направление (например, патриотическое)"
-                />
-
-                <input
-                  type="text"
-                  onChange={(event) => setPlace(event.target.value)}
-                  value={place}
-                  placeholder="Место проведения"
-                />
-
-                <input
-                  type="text"
-                  onChange={(event) => setContact_name(event.target.value)}
-                  value={contact_name}
-                  placeholder="Контактное имя"
-                />
-
-                <input
-                  type="text"
-                  onChange={(event) => setContact_email(event.target.value)}
-                  value={contact_email}
-                  placeholder="Контактный email"
-                />
-
-                <input
-                  type="text"
-                  onChange={(event) => setContact_work(event.target.value)}
-                  value={contact_work}
-                  placeholder="Контактное место работы"
-                />
-
-                <div>
-                  <p>Дата начала</p>
-                  <InputMask
-                    mask="99.99.9999"
-                    placeholder="ДД.ММ.ГГГГ"
-                    value={startDate}
-                    onChange={(event) => setStartDate(event.target.value)}
+        {showPageIndex === 0 ? (
+          <div className={style.admin_event__wrapper}>
+            {loadingEvent ? (
+              <p>Загрузка...</p>
+            ) : (
+              <React.Fragment>
+                <form>
+                  <input
+                    type="text"
+                    value={name}
+                    onChange={(event) => setName(event.target.value)}
+                    placeholder="Название направления"
                   />
-                </div>
-
-                <div>
-                  <p>Время начала</p>
-                  <InputMask
-                    mask="99:99"
-                    placeholder="00:00"
-                    value={startTime}
-                    onChange={(event) => setStartTime(event.target.value)}
+                  <textarea
+                    value={description}
+                    onChange={(event) => setDescription(event.target.value)}
+                    placeholder="Описание"
                   />
-                </div>
 
-                <div>
-                  <p>Дата конца</p>
-                  <InputMask
-                    mask="99.99.9999"
-                    placeholder="ДД.ММ.ГГГГ"
-                    value={finishDate}
-                    onChange={(event) => setFinishDate(event.target.value)}
+                  <input
+                    type="text"
+                    onChange={(event) => setDirecting(event.target.value)}
+                    value={directing}
+                    placeholder="Направление (например, патриотическое)"
                   />
-                </div>
 
-                <div>
-                  <p>Время конца</p>
-                  <InputMask
-                    mask="99:99"
-                    placeholder="00:00"
-                    value={finishTime}
-                    onChange={(event) => setFinishTime(event.target.value)}
+                  <input
+                    type="text"
+                    onChange={(event) => setPlace(event.target.value)}
+                    value={place}
+                    placeholder="Место проведения"
                   />
-                </div>
-              </form>
 
-              <div className={style.create_direction__images}>
-                <div className={style.create_direction__image}>
-                  <p>Изображение</p>
+                  <input
+                    type="text"
+                    onChange={(event) => setContact_name(event.target.value)}
+                    value={contact_name}
+                    placeholder="Контактное имя"
+                  />
 
-                  <input id="main-image" {...getInputPropsMain()} />
+                  <input
+                    type="text"
+                    onChange={(event) => setContact_email(event.target.value)}
+                    value={contact_email}
+                    placeholder="Контактный email"
+                  />
 
-                  <label htmlFor="main-image">
-                    <div>
-                      {imagePath ? (
-                        <img
-                          src={`${process.env.REACT_APP_SERVER_URL}${imagePath}`}
-                          alt="main image"
-                        />
-                      ) : (
-                        <p>Перетащите файл сюда или нажмите для выбора</p>
-                      )}
-                    </div>
-                  </label>
-                </div>
-              </div>
+                  <input
+                    type="text"
+                    onChange={(event) => setContact_work(event.target.value)}
+                    value={contact_work}
+                    placeholder="Контактное место работы"
+                  />
 
-              <div className={style.create_direction__people}>
-                <div className={style.create_direction__organizers}>
-                  <p>Участники мероприятия</p>
+                  <div>
+                    <p>Дата начала</p>
+                    <InputMask
+                      mask="99.99.9999"
+                      placeholder="ДД.ММ.ГГГГ"
+                      value={startDate}
+                      onChange={(event) => setStartDate(event.target.value)}
+                    />
+                  </div>
 
-                  {loadingMembers ? (
-                    <p>Загрузка участников...</p>
-                  ) : (
-                    membersFull && (
-                      <ul>
-                        {membersFull.map(({ fullName, role, _id }) => (
-                          <li key={_id}>
-                            <div>
-                              <Link to={`/user/${_id}`}>
-                                <p>{role}</p>
-                                <p>{fullName}</p>
-                              </Link>
-                            </div>
+                  <div>
+                    <p>Время начала</p>
+                    <InputMask
+                      mask="99:99"
+                      placeholder="00:00"
+                      value={startTime}
+                      onChange={(event) => setStartTime(event.target.value)}
+                    />
+                  </div>
 
-                            {members.includes(_id) ? (
-                              <button
-                                onClick={() => removeMember(_id)}
-                                style={{ backgroundColor: "red" }}
-                              >
-                                Удалить
-                              </button>
-                            ) : (
-                              <button
-                                onClick={() => addMember(_id)}
-                                style={{ backgroundColor: "#009dff" }}
-                              >
-                                Добавить
-                              </button>
-                            )}
-                          </li>
-                        ))}
-                      </ul>
-                    )
-                  )}
-                </div>
+                  <div>
+                    <p>Дата конца</p>
+                    <InputMask
+                      mask="99.99.9999"
+                      placeholder="ДД.ММ.ГГГГ"
+                      value={finishDate}
+                      onChange={(event) => setFinishDate(event.target.value)}
+                    />
+                  </div>
 
-                <div className={style.create_direction__organizers}>
-                  <p>Пригласить на участие</p>
+                  <div>
+                    <p>Время конца</p>
+                    <InputMask
+                      mask="99:99"
+                      placeholder="00:00"
+                      value={finishTime}
+                      onChange={(event) => setFinishTime(event.target.value)}
+                    />
+                  </div>
+                </form>
 
-                  {loadingStudents ? (
-                    <p>Загрузка студентов...</p>
-                  ) : (
-                    students && (
-                      <ul>
-                        {students.map(({ fullName, role, _id }) => (
-                          <li key={_id}>
-                            <div>
-                              <Link to={`/user/${_id}`}>
-                                <p>{role}</p>
-                                <p>{fullName}</p>
-                              </Link>
-                            </div>
+                <div className={style.create_direction__images}>
+                  <div className={style.create_direction__image}>
+                    <p>Изображение</p>
 
-                            {applications.includes(_id) ? (
-                              <button
-                                onClick={() => removeStudent(_id)}
-                                style={{ backgroundColor: "red" }}
-                              >
-                                Удалить
-                              </button>
-                            ) : (
-                              <button
-                                onClick={() => addStudent(_id)}
-                                style={{ backgroundColor: "#009dff" }}
-                              >
-                                Добавить
-                              </button>
-                            )}
-                          </li>
-                        ))}
-                      </ul>
-                    )
-                  )}
-                </div>
-              </div>
+                    <input id="main-image" {...getInputPropsMain()} />
 
-              <div className={style.create_direction__people}>
-                <div className={style.create_direction__organizers}>
-                  <p>Ожидают принятия</p>
-
-                  {loadingUserApplicationsFull ? (
-                    <p>Загрузка...</p>
-                  ) : (
-                    userApplicationsFull && (
-                      <ul>
-                        {userApplicationsFull.map(({ fullName, role, _id }) => (
-                          <li key={_id}>
-                            <div>
-                              <Link to={`/user/${_id}`}>
-                                <p>{role}</p>
-                                <p>{fullName}</p>
-                              </Link>
-                            </div>
-
-                            {members.includes(_id) ? (
-                              <button
-                                onClick={() => removeStudentApplications(_id)}
-                                style={{ backgroundColor: "red" }}
-                              >
-                                Удалить
-                              </button>
-                            ) : (
-                              <button
-                                onClick={() => addStudentApplications(_id)}
-                                style={{ backgroundColor: "#009dff" }}
-                              >
-                                Добавить
-                              </button>
-                            )}
-                          </li>
-                        ))}
-                      </ul>
-                    )
-                  )}
+                    <label htmlFor="main-image">
+                      <div>
+                        {imagePath ? (
+                          <img
+                            src={`${process.env.REACT_APP_SERVER_URL}${imagePath}`}
+                            alt="main image"
+                          />
+                        ) : (
+                          <p>Перетащите файл сюда или нажмите для выбора</p>
+                        )}
+                      </div>
+                    </label>
+                  </div>
                 </div>
 
-                <div className={style.create_direction__organizers}>
-                  <p>Приглашение отправлено</p>
+                <div className={style.create_direction__people}>
+                  <div className={style.create_direction__organizers}>
+                    <button onClick={() => setShowPageIndex(1)}>
+                      Участники мероприятия
+                    </button>
+                  </div>
 
-                  {loadingApplications ? (
-                    <p>Загрузка...</p>
-                  ) : (
-                    applicationsFull && (
-                      <ul>
-                        {applicationsFull.map(({ fullName, role, _id }) => (
-                          <li key={_id}>
-                            <div>
-                              <Link to={`/user/${_id}`}>
-                                <p>{role}</p>
-                                <p>{fullName}</p>
-                              </Link>
-                            </div>
+                  <div className={style.create_direction__organizers}>
+                    <button onClick={() => setShowPageIndex(2)}>
+                      Пригласить на участие
+                    </button>
+                  </div>
 
-                            {applications.includes(_id) ? (
-                              <button
-                                onClick={() => removeApplications(_id)}
-                                style={{ backgroundColor: "red" }}
-                              >
-                                Удалить
-                              </button>
-                            ) : (
-                              <button
-                                onClick={() => addApplications(_id)}
-                                style={{ backgroundColor: "#009dff" }}
-                              >
-                                Добавить
-                              </button>
-                            )}
-                          </li>
-                        ))}
-                      </ul>
-                    )
-                  )}
+                  <div className={style.create_direction__organizers}>
+                    <button onClick={() => setShowPageIndex(3)}>
+                      Ожидают принятия
+                    </button>
+                  </div>
+
+                  <div className={style.create_direction__organizers}>
+                    <button onClick={() => setShowPageIndex(4)}>
+                      Приглашение отправлено
+                    </button>
+                  </div>
+
+                  <div className={style.create_direction__organizers}>
+                    <button onClick={() => setShowPageIndex(5)}>
+                      Добавить ответственных
+                    </button>
+                  </div>
                 </div>
-              </div>
 
-              <div className={style.create_direction__organizers}>
-                <p>Добавить ответственных</p>
+                <Link
+                  to={`${process.env.REACT_APP_SERVER_URL}/excel-event/${id}`}
+                  target="_blank"
+                >
+                  Скачать Excel
+                </Link>
 
-                {loadingAdmins ? (
-                  <p>Загрузка руководителей...</p>
-                ) : (
-                  organizers && (
-                    <ul>
-                      {organizers.map(({ fullName, role, _id }) => (
-                        <li key={_id}>
-                          <div>
+                <button onClick={updateEvent}>Обновить</button>
+                <button onClick={deleteEvent}>Удалить мероприятие</button>
+              </React.Fragment>
+            )}
+          </div>
+        ) : showPageIndex === 1 ? (
+          <div className={style.admin_direction__wrapper}>
+            <div className={style.admin_direction__content}>
+              <button onClick={() => setShowPageIndex(0)}>
+                Вернуться назад
+              </button>
+
+              <h2>Участники мероприятия</h2>
+
+              {loadingMembers ? (
+                <p>Загрузка участников...</p>
+              ) : (
+                membersFull && (
+                  <ul>
+                    {membersFull.map(({ fullName, role, _id }) => (
+                      <li key={_id}>
+                        <div>
+                          <Link to={`/user/${_id}`}>
                             <p>{role}</p>
                             <p>{fullName}</p>
-                          </div>
+                          </Link>
+                        </div>
 
-                          {admins.includes(_id) ? (
-                            <button
-                              onClick={() => removeAdmin(_id)}
-                              style={{ backgroundColor: "red" }}
-                            >
-                              Удалить
-                            </button>
-                          ) : (
-                            <button
-                              onClick={() => addAdmin(_id)}
-                              style={{ backgroundColor: "#009dff" }}
-                            >
-                              Добавить
-                            </button>
-                          )}
-                        </li>
-                      ))}
-                    </ul>
-                  )
-                )}
-              </div>
+                        {members.includes(_id) ? (
+                          <button
+                            onClick={() => removeMember(_id)}
+                            style={{ backgroundColor: "red" }}
+                          >
+                            Удалить
+                          </button>
+                        ) : (
+                          <button
+                            onClick={() => addMember(_id)}
+                            style={{ backgroundColor: "#009dff" }}
+                          >
+                            Добавить
+                          </button>
+                        )}
+                      </li>
+                    ))}
+                  </ul>
+                )
+              )}
+            </div>
+          </div>
+        ) : showPageIndex === 2 ? (
+          <div className={style.admin_direction__wrapper}>
+            <div className={style.admin_direction__content}>
+              <button onClick={() => setShowPageIndex(0)}>
+                Вернуться назад
+              </button>
 
-              <Link
-                to={`${process.env.REACT_APP_SERVER_URL}/excel-event/${id}`}
-                target="_blank"
-              >
-                Скачать Excel
-              </Link>
+              <h2>Пригласить на участие</h2>
 
-              <button onClick={updateEvent}>Обновить</button>
-              <button onClick={deleteEvent}>Удалить мероприятие</button>
-            </React.Fragment>
-          )}
-        </div>
+              {loadingStudents ? (
+                <p>Загрузка студентов...</p>
+              ) : (
+                students && (
+                  <ul>
+                    {students.map(({ fullName, role, _id }) => (
+                      <li key={_id}>
+                        <div>
+                          <Link to={`/user/${_id}`}>
+                            <p>{role}</p>
+                            <p>{fullName}</p>
+                          </Link>
+                        </div>
+
+                        {applications.includes(_id) ? (
+                          <button
+                            onClick={() => removeStudent(_id)}
+                            style={{ backgroundColor: "red" }}
+                          >
+                            Удалить
+                          </button>
+                        ) : (
+                          <button
+                            onClick={() => addStudent(_id)}
+                            style={{ backgroundColor: "#009dff" }}
+                          >
+                            Добавить
+                          </button>
+                        )}
+                      </li>
+                    ))}
+                  </ul>
+                )
+              )}
+            </div>
+          </div>
+        ) : showPageIndex === 3 ? (
+          <div className={style.admin_direction__wrapper}>
+            <div className={style.admin_direction__content}>
+              <button onClick={() => setShowPageIndex(0)}>
+                Вернуться назад
+              </button>
+
+              <h2>Ожидают принятия</h2>
+
+              {loadingUserApplicationsFull ? (
+                <p>Загрузка...</p>
+              ) : (
+                userApplicationsFull && (
+                  <ul>
+                    {userApplicationsFull.map(({ fullName, role, _id }) => (
+                      <li key={_id}>
+                        <div>
+                          <Link to={`/user/${_id}`}>
+                            <p>{role}</p>
+                            <p>{fullName}</p>
+                          </Link>
+                        </div>
+
+                        {members.includes(_id) ? (
+                          <button
+                            onClick={() => removeStudentApplications(_id)}
+                            style={{ backgroundColor: "red" }}
+                          >
+                            Удалить
+                          </button>
+                        ) : (
+                          <button
+                            onClick={() => addStudentApplications(_id)}
+                            style={{ backgroundColor: "#009dff" }}
+                          >
+                            Добавить
+                          </button>
+                        )}
+                      </li>
+                    ))}
+                  </ul>
+                )
+              )}
+            </div>
+          </div>
+        ) : showPageIndex === 4 ? (
+          <div className={style.admin_direction__wrapper}>
+            <div className={style.admin_direction__content}>
+              <button onClick={() => setShowPageIndex(0)}>
+                Вернуться назад
+              </button>
+
+              <h2>Приглашение отправлено</h2>
+
+              {loadingApplications ? (
+                <p>Загрузка...</p>
+              ) : (
+                applicationsFull && (
+                  <ul>
+                    {applicationsFull.map(({ fullName, role, _id }) => (
+                      <li key={_id}>
+                        <div>
+                          <Link to={`/user/${_id}`}>
+                            <p>{role}</p>
+                            <p>{fullName}</p>
+                          </Link>
+                        </div>
+
+                        {applications.includes(_id) ? (
+                          <button
+                            onClick={() => removeApplications(_id)}
+                            style={{ backgroundColor: "red" }}
+                          >
+                            Удалить
+                          </button>
+                        ) : (
+                          <button
+                            onClick={() => addApplications(_id)}
+                            style={{ backgroundColor: "#009dff" }}
+                          >
+                            Добавить
+                          </button>
+                        )}
+                      </li>
+                    ))}
+                  </ul>
+                )
+              )}
+            </div>
+          </div>
+        ) : (
+          <div className={style.admin_direction__wrapper}>
+            <div className={style.admin_direction__content}>
+              <button onClick={() => setShowPageIndex(0)}>
+                Вернуться назад
+              </button>
+
+              <h2>Добавить ответственных</h2>
+
+              {loadingAdmins ? (
+                <p>Загрузка руководителей...</p>
+              ) : (
+                organizers && (
+                  <ul>
+                    {organizers.map(({ fullName, role, _id }) => (
+                      <li key={_id}>
+                        <div>
+                          <p>{role}</p>
+                          <p>{fullName}</p>
+                        </div>
+
+                        {admins.includes(_id) ? (
+                          <button
+                            onClick={() => removeAdmin(_id)}
+                            style={{ backgroundColor: "red" }}
+                          >
+                            Удалить
+                          </button>
+                        ) : (
+                          <button
+                            onClick={() => addAdmin(_id)}
+                            style={{ backgroundColor: "#009dff" }}
+                          >
+                            Добавить
+                          </button>
+                        )}
+                      </li>
+                    ))}
+                  </ul>
+                )
+              )}
+            </div>
+          </div>
+        )}
       </div>
     </section>
   );

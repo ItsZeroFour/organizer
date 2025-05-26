@@ -79,10 +79,18 @@
 
 .create_direction__people {
   margin-top: 60px;
+  margin-bottom: 40px;
 }
 
 .create_direction__organizers {
   margin-top: 40px;
+
+  & > button {
+    padding: 10px 20px;
+    background: var(--color-blue);
+    color: var(--color-white);
+    border-radius: 20px;
+  }
 }
 
 .create_direction__organizers {
@@ -123,4 +131,60 @@
 .create_direction__people {
   display: flex;
   justify-content: space-between;
+}
+
+.admin_direction__content {
+  background: var(--color-white);
+  padding: 30px;
+  border-radius: 30px;
+
+  h2 {
+    margin-top: 20px;
+  }
+
+  & > button {
+    background: none;
+    color: var(--color-blue);
+  }
+
+  ul {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+
+    li {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+
+      div {
+        width: 350px;
+        a {
+          p {
+            &:first-child {
+              font-size: 12px;
+            }
+
+            &:last-child {
+              font-size: 16px;
+              font-family: "Montserrat-md", sans-serif;
+              font-weight: 500;
+            }
+          }
+        }
+      }
+
+      button {
+        margin-top: 10px;
+        padding: 10px 20px;
+        border-radius: 20px;
+        color: var(--color-white);
+      }
+    }
+  }
+}
+
+.admin_direction__wrapper {
+  margin-top: 40px;
 }

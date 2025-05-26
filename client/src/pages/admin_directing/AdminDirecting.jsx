@@ -29,6 +29,8 @@ const AdminDirecting = ({ userData }) => {
   const [loadingStudens, setLoadingStudens] = useState(false);
   const [loadingMembers, setLoadingMembers] = useState(false);
 
+  const [showPageIndex, setShowPageIndex] = useState(0);
+
   const { id } = useParams();
   const navigate = useNavigate();
 
@@ -308,276 +310,320 @@ const AdminDirecting = ({ userData }) => {
   return (
     <section className={style.admin_direction}>
       <div className="container">
-        <div className={style.admin_direction__wrapper}>
-          {loadingDirecting ? (
-            <p>Загрузка...</p>
-          ) : (
-            directing &&
-            userData &&
-            (userData?.role.toLowerCase() === "администратор" ||
-              userData?.role.toLowerCase() === "зам. в.о." ||
-              directing.admins.includes(userData._id)) && (
-              <React.Fragment>
-                <form>
-                  <div>
-                    <p>Название направления</p>
+        {showPageIndex === 0 ? (
+          <div className={style.admin_direction__wrapper}>
+            {loadingDirecting ? (
+              <p>Загрузка...</p>
+            ) : (
+              directing &&
+              userData &&
+              (userData?.role.toLowerCase() === "администратор" ||
+                userData?.role.toLowerCase() === "зам. в.о." ||
+                directing.admins.includes(userData._id)) && (
+                <React.Fragment>
+                  <form>
+                    <div>
+                      <p>Название направления</p>
+                      <input
+                        type="text"
+                        value={name}
+                        onChange={(event) => setName(event.target.value)}
+                      />
+                    </div>
+
+                    <div>
+                      <p>Основное описание</p>
+                      <textarea
+                        value={description}
+                        onChange={(event) => setDescription(event.target.value)}
+                      />
+                    </div>
+
+                    <div>
+                      <p>Следующее описание</p>
+                      <textarea
+                        value={secondDescription}
+                        onChange={(event) =>
+                          setSecondDescription(event.target.value)
+                        }
+                      />
+                    </div>
+                  </form>
+
+                  <div className={style.create_direction__images}>
+                    <div className={style.create_direction__image}>
+                      <p>Главное изображение</p>
+
+                      <input id="main-image" {...getInputPropsMain()} />
+
+                      <label htmlFor="main-image">
+                        <div>
+                          {imagePath ? (
+                            <img
+                              src={`${process.env.REACT_APP_SERVER_URL}${imagePath}`}
+                              alt="main image"
+                            />
+                          ) : (
+                            <p>Перетащите файл сюда или нажмите для выбора</p>
+                          )}
+                        </div>
+                      </label>
+                    </div>
+
+                    <div className={style.create_direction__image}>
+                      <p>Второе изображение</p>
+
+                      <input id="second-image" {...getInputPropsSecond()} />
+
+                      <label htmlFor="second-image">
+                        <div>
+                          {secondImagePath ? (
+                            <img
+                              src={`${process.env.REACT_APP_SERVER_URL}${secondImagePath}`}
+                              alt="second image"
+                            />
+                          ) : (
+                            <p>Перетащите файл сюда или нажмите для выбора</p>
+                          )}
+                        </div>
+                      </label>
+                    </div>
+                  </div>
+
+                  <div className={style.create_direction__gallery}>
+                    <p>Галерея</p>
+                    <div className={style.create_direction__image}>
+                      <input id="gallery" {...getInputPropsGallery()} />
+                      <label htmlFor="gallery">
+                        <div>
+                          <p>Перетащите файлы сюда или нажмите для выбора</p>
+                        </div>
+                      </label>
+                    </div>
+                    <div className={style.gallery_preview}>
+                      {gallery.map((image, index) => (
+                        <div key={index} className={style.gallery_item}>
+                          <img
+                            src={`${process.env.REACT_APP_SERVER_URL}${image}`}
+                            alt={`Gallery ${index}`}
+                          />
+                          <button onClick={() => removeImageFromGallery(index)}>
+                            Удалить
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className={style.skills}>
+                    <h3>Навыки</h3>
+                    <ul>
+                      {skills.map((item, index) => (
+                        <li key={index}>
+                          <p>{item}</p>
+                          <button onClick={() => removeSkill(index)}>
+                            Удалить
+                          </button>
+                        </li>
+                      ))}
+                    </ul>
                     <input
                       type="text"
-                      value={name}
-                      onChange={(event) => setName(event.target.value)}
+                      value={newSkill}
+                      onChange={(event) => setNewSkill(event.target.value)}
+                      placeholder="Добавить новый навык"
                     />
+                    <button onClick={addSkill}>Добавить навык</button>
                   </div>
 
-                  <div>
-                    <p>Основное описание</p>
-                    <textarea
-                      value={description}
-                      onChange={(event) => setDescription(event.target.value)}
-                    />
-                  </div>
-
-                  <div>
-                    <p>Следующее описание</p>
-                    <textarea
-                      value={secondDescription}
-                      onChange={(event) =>
-                        setSecondDescription(event.target.value)
-                      }
-                    />
-                  </div>
-                </form>
-
-                <div className={style.create_direction__images}>
-                  <div className={style.create_direction__image}>
-                    <p>Главное изображение</p>
-
-                    <input id="main-image" {...getInputPropsMain()} />
-
-                    <label htmlFor="main-image">
-                      <div>
-                        {imagePath ? (
-                          <img
-                            src={`${process.env.REACT_APP_SERVER_URL}${imagePath}`}
-                            alt="main image"
-                          />
-                        ) : (
-                          <p>Перетащите файл сюда или нажмите для выбора</p>
-                        )}
-                      </div>
-                    </label>
-                  </div>
-
-                  <div className={style.create_direction__image}>
-                    <p>Второе изображение</p>
-
-                    <input id="second-image" {...getInputPropsSecond()} />
-
-                    <label htmlFor="second-image">
-                      <div>
-                        {secondImagePath ? (
-                          <img
-                            src={`${process.env.REACT_APP_SERVER_URL}${secondImagePath}`}
-                            alt="second image"
-                          />
-                        ) : (
-                          <p>Перетащите файл сюда или нажмите для выбора</p>
-                        )}
-                      </div>
-                    </label>
-                  </div>
-                </div>
-
-                <div className={style.create_direction__gallery}>
-                  <p>Галерея</p>
-                  <div className={style.create_direction__image}>
-                    <input id="gallery" {...getInputPropsGallery()} />
-                    <label htmlFor="gallery">
-                      <div>
-                        <p>Перетащите файлы сюда или нажмите для выбора</p>
-                      </div>
-                    </label>
-                  </div>
-                  <div className={style.gallery_preview}>
-                    {gallery.map((image, index) => (
-                      <div key={index} className={style.gallery_item}>
-                        <img
-                          src={`${process.env.REACT_APP_SERVER_URL}${image}`}
-                          alt={`Gallery ${index}`}
-                        />
-                        <button onClick={() => removeImageFromGallery(index)}>
-                          Удалить
+                  <div className={style.admin_direction__people}>
+                    {(userData.role.toLowerCase() === "зам. в.о." ||
+                      userData.role.toLowerCase() === "администратор") && (
+                      <div className={style.create_direction__organizers}>
+                        <button onClick={() => setShowPageIndex(1)}>
+                          Добавить руководителей
                         </button>
                       </div>
-                    ))}
+                    )}
+
+                    {directing?.admins?.includes(userData._id) ||
+                      ((userData.role?.toLowerCase() === "администратор" ||
+                        userData.role?.toLowerCase() === "зам. в.о." ||
+                        userData.role?.toLowerCase() === "сотрудник в.о." ||
+                        userData.role?.toLowerCase() ===
+                          "руководитель с.о.") && (
+                        <div className={style.create_direction__organizers}>
+                          <button onClick={() => setShowPageIndex(2)}>
+                            Входящие заявки студентов
+                          </button>
+                        </div>
+                      ))}
+
+                    {directing?.admins?.includes(userData._id) ||
+                      ((userData.role?.toLowerCase() === "администратор" ||
+                        userData.role?.toLowerCase() === "зам. в.о." ||
+                        userData.role?.toLowerCase() === "сотрудник в.о." ||
+                        userData.role?.toLowerCase() ===
+                          "руководитель с.о.") && (
+                        <div className={style.create_direction__organizers}>
+                          <button onClick={() => setShowPageIndex(3)}>
+                            Участники направления
+                          </button>
+                        </div>
+                      ))}
                   </div>
-                </div>
-
-                <div className={style.skills}>
-                  <h3>Навыки</h3>
-                  <ul>
-                    {skills.map((item, index) => (
-                      <li key={index}>
-                        <p>{item}</p>
-                        <button onClick={() => removeSkill(index)}>
-                          Удалить
-                        </button>
-                      </li>
-                    ))}
-                  </ul>
-                  <input
-                    type="text"
-                    value={newSkill}
-                    onChange={(event) => setNewSkill(event.target.value)}
-                    placeholder="Добавить новый навык"
-                  />
-                  <button onClick={addSkill}>Добавить навык</button>
-                </div>
-
-                <div className={style.admin_direction__people}>
-                  {(userData.role.toLowerCase() === "зам. в.о." ||
-                    userData.role.toLowerCase() === "администратор") && (
-                    <div className={style.create_direction__organizers}>
-                      <p>Добавить руководителя</p>
-
-                      {loadingOrganizers ? (
-                        <p>Загрузка руководителей...</p>
-                      ) : (
-                        organizers && (
-                          <ul>
-                            {organizers.map(({ fullName, role, _id }) => (
-                              <li key={_id}>
-                                <div>
-                                  <Link to={`/user/${_id}`}>
-                                    <p>{role}</p>
-                                    <p>{fullName}</p>
-                                  </Link>
-                                </div>
-
-                                {admins.includes(_id) ? (
-                                  <button
-                                    onClick={() => removeAdmin(_id)}
-                                    style={{ backgroundColor: "red" }}
-                                  >
-                                    Удалить
-                                  </button>
-                                ) : (
-                                  <button
-                                    onClick={() => addAdmin(_id)}
-                                    style={{ backgroundColor: "#009dff" }}
-                                  >
-                                    Добавить
-                                  </button>
-                                )}
-                              </li>
-                            ))}
-                          </ul>
-                        )
-                      )}
-                    </div>
-                  )}
 
                   {directing?.admins?.includes(userData._id) &&
                     (userData.role?.toLowerCase() === "администратор" ||
                       userData.role?.toLowerCase() === "сотрудник в.о." ||
                       userData.role?.toLowerCase() === "руководитель с.о.") && (
-                      <div className={style.create_direction__organizers}>
-                        <p>Входящие заявки студентов</p>
-
-                        {loadingStudens ? (
-                          <p>Загрузка студентов...</p>
-                        ) : (
-                          Array.isArray(applications) && (
-                            <ul>
-                              {applications.map(
-                                ({ fullName, role, _id, group }) => (
-                                  <li key={_id}>
-                                    <div>
-                                      <Link to={`/user/${_id}`}>
-                                        <p>{role}</p>
-                                        <p>
-                                          {fullName}. Группа: {group}
-                                        </p>
-                                      </Link>
-                                    </div>
-
-                                    {members.includes(_id) ? (
-                                      <button
-                                        onClick={() => removeMember(_id)}
-                                        style={{ backgroundColor: "red" }}
-                                      >
-                                        Удалить
-                                      </button>
-                                    ) : (
-                                      <button
-                                        onClick={() => addMember(_id)}
-                                        style={{ backgroundColor: "#009dff" }}
-                                      >
-                                        Добавить
-                                      </button>
-                                    )}
-                                  </li>
-                                )
-                              )}
-                            </ul>
-                          )
-                        )}
-                      </div>
+                      <Link
+                        to={`${process.env.REACT_APP_SERVER_URL}/excel-direction/${id}`}
+                        target="_blank"
+                      >
+                        Скачать Excel
+                      </Link>
                     )}
-                </div>
 
-                <div className={style.create_direction__organizers}>
-                  <p>Участники направления</p>
+                  <button onClick={updateDirecting} disabled={saving}>
+                    {saving ? "Сохранение..." : "Обновить"}
+                  </button>
 
-                  {loadingMembers ? (
-                    <p>Загрузка участников...</p>
-                  ) : (
-                    Array.isArray(membersFull) && (
-                      <ul>
-                        {membersFull.map(({ fullName, role, _id, group }) => (
-                          <li key={_id}>
-                            <div>
-                              <Link to={`/user/${_id}`}>
-                                <p>{role}</p>
-                                <p>
-                                  {fullName}. Группа: {group}
-                                </p>
-                              </Link>
-                            </div>
+                  <button onClick={deleteDirection}>Удалить мероприятие</button>
+                </React.Fragment>
+              )
+            )}
+          </div>
+        ) : showPageIndex === 1 ? (
+          <div className={style.admin_direction__wrapper}>
+            <div className={style.admin_direction__content}>
+              <button onClick={() => setShowPageIndex(0)}>
+                Вернуться назад
+              </button>
 
-                            <button
-                              onClick={() => removeMember(_id)}
-                              style={{ backgroundColor: "red" }}
-                            >
-                              Удалить
-                            </button>
-                          </li>
-                        ))}
-                      </ul>
-                    )
-                  )}
-                </div>
+              <h2>Добавить руководителей</h2>
+              {loadingOrganizers ? (
+                <p>Загрузка руководителей...</p>
+              ) : (
+                organizers && (
+                  <ul>
+                    {organizers.map(({ fullName, role, _id }) => (
+                      <li key={_id}>
+                        <div>
+                          <Link to={`/user/${_id}`}>
+                            <p>{role}</p>
+                            <p>{fullName}</p>
+                          </Link>
+                        </div>
 
-                {directing?.admins?.includes(userData._id) &&
-                  (userData.role?.toLowerCase() === "администратор" ||
-                    userData.role?.toLowerCase() === "сотрудник в.о." ||
-                    userData.role?.toLowerCase() === "руководитель с.о.") && (
-                    <Link
-                      to={`${process.env.REACT_APP_SERVER_URL}/excel-direction/${id}`}
-                      target="_blank"
-                    >
-                      Скачать Excel
-                    </Link>
-                  )}
+                        {admins.includes(_id) ? (
+                          <button
+                            onClick={() => removeAdmin(_id)}
+                            style={{ backgroundColor: "red" }}
+                          >
+                            Удалить
+                          </button>
+                        ) : (
+                          <button
+                            onClick={() => addAdmin(_id)}
+                            style={{ backgroundColor: "#009dff" }}
+                          >
+                            Добавить
+                          </button>
+                        )}
+                      </li>
+                    ))}
+                  </ul>
+                )
+              )}
+            </div>
+          </div>
+        ) : showPageIndex === 2 ? (
+          <div className={style.admin_direction__wrapper}>
+            <div className={style.admin_direction__content}>
+              <button onClick={() => setShowPageIndex(0)}>
+                Вернуться назад
+              </button>
 
-                <button onClick={updateDirecting} disabled={saving}>
-                  {saving ? "Сохранение..." : "Обновить"}
-                </button>
+              <h2>Входящие заявки студентов</h2>
 
-                <button onClick={deleteDirection}>Удалить мероприятие</button>
-              </React.Fragment>
-            )
-          )}
-        </div>
+              {loadingStudens ? (
+                <p>Загрузка студентов...</p>
+              ) : (
+                Array.isArray(applications) && (
+                  <ul>
+                    {applications.map(({ fullName, role, _id, group }) => (
+                      <li key={_id}>
+                        <div>
+                          <Link to={`/user/${_id}`}>
+                            <p>{role}</p>
+                            <p>
+                              {fullName}. Группа: {group}
+                            </p>
+                          </Link>
+                        </div>
+
+                        {members.includes(_id) ? (
+                          <button
+                            onClick={() => removeMember(_id)}
+                            style={{ backgroundColor: "red" }}
+                          >
+                            Удалить
+                          </button>
+                        ) : (
+                          <button
+                            onClick={() => addMember(_id)}
+                            style={{ backgroundColor: "#009dff" }}
+                          >
+                            Добавить
+                          </button>
+                        )}
+                      </li>
+                    ))}
+                  </ul>
+                )
+              )}
+            </div>
+          </div>
+        ) : (
+          <div className={style.admin_direction__wrapper}>
+            <div className={style.admin_direction__content}>
+              <button onClick={() => setShowPageIndex(0)}>
+                Вернуться назад
+              </button>
+
+              <h2>Участники направления</h2>
+
+              {loadingMembers ? (
+                <p>Загрузка участников...</p>
+              ) : (
+                Array.isArray(membersFull) && (
+                  <ul>
+                    {membersFull.map(({ fullName, role, _id, group }) => (
+                      <li key={_id}>
+                        <div>
+                          <Link to={`/user/${_id}`}>
+                            <p>{role}</p>
+                            <p>
+                              {fullName}. Группа: {group}
+                            </p>
+                          </Link>
+                        </div>
+
+                        <button
+                          onClick={() => removeMember(_id)}
+                          style={{ backgroundColor: "red" }}
+                        >
+                          Удалить
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                )
+              )}
+            </div>
+          </div>
+        )}
       </div>
     </section>
   );
