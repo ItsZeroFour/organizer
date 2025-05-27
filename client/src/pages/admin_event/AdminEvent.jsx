@@ -1,6 +1,6 @@
 import { Link, useParams } from "react-router-dom";
 import axios from "../../utils/axios";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import style from "./style.module.scss";
 import { useDropzone } from "react-dropzone";
 import { useNavigate } from "react-router-dom";
@@ -55,6 +55,7 @@ const AdminEvent = () => {
     title: "",
     person: "",
     desc: "",
+    count: 0,
   });
 
   const [isLoading, setIsLoading] = useState(false);
@@ -62,10 +63,17 @@ const AdminEvent = () => {
 
   const [searchMemberTerm, setSearchMemberTerm] = useState("");
   const [searchInviteTerm, setSearchInviteTerm] = useState("");
+  const [searchInviteGroup, setSearchInviteGroup] = useState("");
+
   const [searchApplicationTerm, setSearchApplicationTerm] = useState("");
+  const [searchApplicationGroup, setSearchApplicationGroup] = useState("");
+
   const [searchSentApplicationTerm, setSearchSentApplicationTerm] =
     useState("");
+  const [searchSentApplicationTermGroup, setSearchSentApplicationTermGroup] =
+    useState("");
   const [searchTerm, setSearchTerm] = useState("");
+  const [searchGroupTerm, setSearchGroupTerm] = useState("");
 
   const [showNotificationDelete, setShowNotificationDelete] = useState(false);
   const [showNotificationUpdate, setShowNotificationUpdate] = useState(false);
@@ -340,29 +348,61 @@ const AdminEvent = () => {
     }
   };
 
-  const filteredMembers = Array.isArray(membersFull)
-    ? membersFull.filter(({ fullName }) =>
-        fullName.toLowerCase().includes(searchMemberTerm.toLowerCase())
-      )
-    : [];
+  const filteredMembers = useMemo(() => {
+    if (!Array.isArray(membersFull)) return [];
 
-  const filteredStudents = Array.isArray(students)
-    ? students.filter(({ fullName }) =>
-        fullName.toLowerCase().includes(searchInviteTerm.toLowerCase())
-      )
-    : [];
+    const name = searchMemberTerm.toLowerCase();
+    const group = searchGroupTerm.toLowerCase();
 
-  const filteredApplications = Array.isArray(userApplicationsFull)
-    ? userApplicationsFull.filter(({ fullName }) =>
-        fullName.toLowerCase().includes(searchApplicationTerm.toLowerCase())
-      )
-    : [];
+    return membersFull.filter(({ fullName, group: groupName }) => {
+      const matchesName = fullName.toLowerCase().includes(name);
+      const matchesGroup = groupName?.toLowerCase().includes(group);
+      return matchesName && matchesGroup;
+    });
+  }, [searchMemberTerm, searchGroupTerm, membersFull]);
 
-  const filteredApplications2 = Array.isArray(applicationsFull)
-    ? applicationsFull.filter(({ fullName }) =>
-        fullName.toLowerCase().includes(searchSentApplicationTerm.toLowerCase())
-      )
-    : [];
+  const filteredStudents = useMemo(() => {
+    if (!Array.isArray(students)) return [];
+
+    const name = searchInviteTerm.toLowerCase();
+    const group = searchInviteGroup.toLowerCase();
+
+    return students.filter(({ fullName, group: groupName }) => {
+      const matchName = fullName.toLowerCase().includes(name);
+      const matchGroup = groupName?.toLowerCase().includes(group);
+      return matchName && matchGroup;
+    });
+  }, [students, searchInviteTerm, searchInviteGroup]);
+
+  const filteredApplications = useMemo(() => {
+    if (!Array.isArray(userApplicationsFull)) return [];
+
+    const name = searchApplicationTerm.toLowerCase();
+    const group = searchApplicationGroup.toLowerCase();
+
+    return userApplicationsFull.filter(({ fullName, group: groupName }) => {
+      const matchName = fullName.toLowerCase().includes(name);
+      const matchGroup = groupName?.toLowerCase().includes(group);
+      return matchName && matchGroup;
+    });
+  }, [userApplicationsFull, searchApplicationTerm, searchApplicationGroup]);
+
+  const filteredApplications2 = useMemo(() => {
+    if (!Array.isArray(applicationsFull)) return [];
+
+    const name = searchSentApplicationTerm.toLowerCase();
+    const group = searchSentApplicationTermGroup.toLowerCase();
+
+    return applicationsFull.filter(({ fullName, group: groupName }) => {
+      const matchName = fullName.toLowerCase().includes(name);
+      const matchGroup = groupName?.toLowerCase().includes(group);
+      return matchName && matchGroup;
+    });
+  }, [
+    applicationsFull,
+    searchSentApplicationTerm,
+    searchSentApplicationTermGroup,
+  ]);
 
   const filteredOrganizers = Array.isArray(organizers)
     ? organizers.filter(({ fullName }) =>
@@ -490,6 +530,18 @@ const AdminEvent = () => {
                     id="desc"
                     name="desc"
                     value={formData.desc}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label htmlFor="count">Человек присутствовало:</label>
+                  <input
+                    type="number"
+                    id="count"
+                    name="count"
+                    value={formData.count}
                     onChange={handleChange}
                     required
                   />
@@ -731,12 +783,21 @@ const AdminEvent = () => {
 
                   <h2>Участники мероприятия</h2>
 
-                  <input
-                    type="text"
-                    placeholder="Поиск..."
-                    value={searchMemberTerm}
-                    onChange={(e) => setSearchMemberTerm(e.target.value)}
-                  />
+                  <div>
+                    <input
+                      type="text"
+                      placeholder="Поиск..."
+                      value={searchMemberTerm}
+                      onChange={(e) => setSearchMemberTerm(e.target.value)}
+                    />
+
+                    <input
+                      type="text"
+                      placeholder="Поиск по группе..."
+                      value={searchGroupTerm}
+                      onChange={(e) => setSearchGroupTerm(e.target.value)}
+                    />
+                  </div>
 
                   {loadingMembers ? (
                     <p>Загрузка участников...</p>
@@ -783,12 +844,21 @@ const AdminEvent = () => {
 
                   <h2>Пригласить на участие</h2>
 
-                  <input
-                    type="text"
-                    placeholder="Поиск..."
-                    value={searchInviteTerm}
-                    onChange={(e) => setSearchInviteTerm(e.target.value)}
-                  />
+                  <div>
+                    <input
+                      type="text"
+                      placeholder="Поиск..."
+                      value={searchInviteTerm}
+                      onChange={(e) => setSearchInviteTerm(e.target.value)}
+                    />
+
+                    <input
+                      type="text"
+                      placeholder="Поиск по группе..."
+                      value={searchInviteGroup}
+                      onChange={(e) => setSearchInviteGroup(e.target.value)}
+                    />
+                  </div>
 
                   {loadingStudents ? (
                     <p>Загрузка студентов...</p>
@@ -835,12 +905,23 @@ const AdminEvent = () => {
 
                   <h2>Ожидают принятия</h2>
 
-                  <input
-                    type="text"
-                    placeholder="Поиск..."
-                    value={searchApplicationTerm}
-                    onChange={(e) => setSearchApplicationTerm(e.target.value)}
-                  />
+                  <div>
+                    <input
+                      type="text"
+                      placeholder="Поиск..."
+                      value={searchApplicationTerm}
+                      onChange={(e) => setSearchApplicationTerm(e.target.value)}
+                    />
+
+                    <input
+                      type="text"
+                      placeholder="Поиск по группе..."
+                      value={searchApplicationGroup}
+                      onChange={(e) =>
+                        setSearchApplicationGroup(e.target.value)
+                      }
+                    />
+                  </div>
 
                   {loadingUserApplicationsFull ? (
                     <p>Загрузка...</p>
@@ -887,14 +968,25 @@ const AdminEvent = () => {
 
                   <h2>Приглашение отправлено</h2>
 
-                  <input
-                    type="text"
-                    placeholder="Поиск..."
-                    value={searchSentApplicationTerm}
-                    onChange={(e) =>
-                      setSearchSentApplicationTerm(e.target.value)
-                    }
-                  />
+                  <div>
+                    <input
+                      type="text"
+                      placeholder="Поиск..."
+                      value={searchSentApplicationTerm}
+                      onChange={(e) =>
+                        setSearchSentApplicationTerm(e.target.value)
+                      }
+                    />
+
+                    <input
+                      type="text"
+                      placeholder="Поиск по группе..."
+                      value={searchSentApplicationTermGroup}
+                      onChange={(e) =>
+                        setSearchSentApplicationTermGroup(e.target.value)
+                      }
+                    />
+                  </div>
 
                   {loadingApplications ? (
                     <p>Загрузка...</p>
