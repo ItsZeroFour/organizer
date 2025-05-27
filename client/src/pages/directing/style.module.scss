@@ -74,11 +74,19 @@
     align-items: flex-start; /* Изменено с 'start' на 'flex-start' */
   }
 
+  & > div {
+    a {
+      margin-top: 20px;
+    }
+  }
+
   position: relative;
   z-index: 2;
 
   p {
     font-size: 14px;
+    margin-top: 5px;
+    width: 70%;
   }
 
   h2 {
@@ -91,7 +99,7 @@
     padding: 15px 60px;
     background: var(--color-blue);
     border-radius: 5px;
-    margin-top: 40px;
+    // margin-top: 40px;
   }
 }
 
@@ -206,4 +214,21 @@
 .directing__about__content {
   display: flex;
   gap: 20px;
+}
+
+
+.directing__buttons {
+  margin-top: 20px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+
+  button {
+    border-radius: 30px;
+
+    &:last-child {
+      background: var(--color-red) !important;
+    }
+  }
 }

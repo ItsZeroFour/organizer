@@ -350,6 +350,38 @@ const AdminEvent = () => {
               <p>Загрузка...</p>
             ) : (
               <React.Fragment>
+                <div className={style.create_direction__people}>
+                  <div className={style.create_direction__organizers}>
+                    <button onClick={() => setShowPageIndex(1)}>
+                      Участники мероприятия
+                    </button>
+                  </div>
+
+                  <div className={style.create_direction__organizers}>
+                    <button onClick={() => setShowPageIndex(2)}>
+                      Пригласить на участие
+                    </button>
+                  </div>
+
+                  <div className={style.create_direction__organizers}>
+                    <button onClick={() => setShowPageIndex(3)}>
+                      Ожидают принятия
+                    </button>
+                  </div>
+
+                  <div className={style.create_direction__organizers}>
+                    <button onClick={() => setShowPageIndex(4)}>
+                      Приглашение отправлено
+                    </button>
+                  </div>
+
+                  <div className={style.create_direction__organizers}>
+                    <button onClick={() => setShowPageIndex(5)}>
+                      Добавить ответственных
+                    </button>
+                  </div>
+                </div>
+
                 <form>
                   <input
                     type="text"
@@ -460,44 +492,11 @@ const AdminEvent = () => {
                   </div>
                 </div>
 
-                <div className={style.create_direction__people}>
-                  <div className={style.create_direction__organizers}>
-                    <button onClick={() => setShowPageIndex(1)}>
-                      Участники мероприятия
-                    </button>
-                  </div>
-
-                  <div className={style.create_direction__organizers}>
-                    <button onClick={() => setShowPageIndex(2)}>
-                      Пригласить на участие
-                    </button>
-                  </div>
-
-                  <div className={style.create_direction__organizers}>
-                    <button onClick={() => setShowPageIndex(3)}>
-                      Ожидают принятия
-                    </button>
-                  </div>
-
-                  <div className={style.create_direction__organizers}>
-                    <button onClick={() => setShowPageIndex(4)}>
-                      Приглашение отправлено
-                    </button>
-                  </div>
-
-                  <div className={style.create_direction__organizers}>
-                    <button onClick={() => setShowPageIndex(5)}>
-                      Добавить ответственных
-                    </button>
-                  </div>
-                </div>
-
-                <Link
-                  to={`${process.env.REACT_APP_SERVER_URL}/excel-event/${id}`}
-                  target="_blank"
+                <button
+                // to={`${process.env.REACT_APP_SERVER_URL}/excel-event/${id}`}
                 >
                   Скачать Excel
-                </Link>
+                </button>
 
                 <button onClick={updateEvent}>Обновить</button>
                 <button onClick={deleteEvent}>Удалить мероприятие</button>

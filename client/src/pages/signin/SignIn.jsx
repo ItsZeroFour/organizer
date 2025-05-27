@@ -29,7 +29,7 @@ const SignIn = () => {
       );
       if (res.status === 200) {
         localStorage.setItem("token", res.data.token);
-        alert("Вы успешно вошли!");
+        // alert("Вы успешно вошли!");
         navigate("/");
         window.location.reload();
       }

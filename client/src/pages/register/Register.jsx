@@ -34,7 +34,7 @@ const Register = () => {
       );
       if (res.status === 200) {
         localStorage.setItem("token", res.data.token);
-        alert("Вы успешно зарегистировались!");
+        // alert("Вы успешно зарегистировались!");
         navigate("/");
         window.location.reload();
       }

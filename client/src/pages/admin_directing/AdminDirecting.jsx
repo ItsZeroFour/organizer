@@ -321,6 +321,43 @@ const AdminDirecting = ({ userData }) => {
                 userData?.role.toLowerCase() === "зам. в.о." ||
                 directing.admins.includes(userData._id)) && (
                 <React.Fragment>
+                  <div className={style.admin_direction__people}>
+                    {(userData.role.toLowerCase() === "зам. в.о." ||
+                      userData.role.toLowerCase() === "администратор") && (
+                      <div className={style.create_direction__organizers}>
+                        <button onClick={() => setShowPageIndex(1)}>
+                          Добавить руководителей
+                        </button>
+                      </div>
+                    )}
+
+                    {directing?.admins?.includes(userData._id) ||
+                      ((userData.role?.toLowerCase() === "администратор" ||
+                        userData.role?.toLowerCase() === "зам. в.о." ||
+                        userData.role?.toLowerCase() === "сотрудник в.о." ||
+                        userData.role?.toLowerCase() ===
+                          "руководитель с.о.") && (
+                        <div className={style.create_direction__organizers}>
+                          <button onClick={() => setShowPageIndex(2)}>
+                            Входящие заявки студентов
+                          </button>
+                        </div>
+                      ))}
+
+                    {directing?.admins?.includes(userData._id) ||
+                      ((userData.role?.toLowerCase() === "администратор" ||
+                        userData.role?.toLowerCase() === "зам. в.о." ||
+                        userData.role?.toLowerCase() === "сотрудник в.о." ||
+                        userData.role?.toLowerCase() ===
+                          "руководитель с.о.") && (
+                        <div className={style.create_direction__organizers}>
+                          <button onClick={() => setShowPageIndex(3)}>
+                            Участники направления
+                          </button>
+                        </div>
+                      ))}
+                  </div>
+
                   <form>
                     <div>
                       <p>Название направления</p>
@@ -434,43 +471,6 @@ const AdminDirecting = ({ userData }) => {
                       placeholder="Добавить новый навык"
                     />
                     <button onClick={addSkill}>Добавить навык</button>
-                  </div>
-
-                  <div className={style.admin_direction__people}>
-                    {(userData.role.toLowerCase() === "зам. в.о." ||
-                      userData.role.toLowerCase() === "администратор") && (
-                      <div className={style.create_direction__organizers}>
-                        <button onClick={() => setShowPageIndex(1)}>
-                          Добавить руководителей
-                        </button>
-                      </div>
-                    )}
-
-                    {directing?.admins?.includes(userData._id) ||
-                      ((userData.role?.toLowerCase() === "администратор" ||
-                        userData.role?.toLowerCase() === "зам. в.о." ||
-                        userData.role?.toLowerCase() === "сотрудник в.о." ||
-                        userData.role?.toLowerCase() ===
-                          "руководитель с.о.") && (
-                        <div className={style.create_direction__organizers}>
-                          <button onClick={() => setShowPageIndex(2)}>
-                            Входящие заявки студентов
-                          </button>
-                        </div>
-                      ))}
-
-                    {directing?.admins?.includes(userData._id) ||
-                      ((userData.role?.toLowerCase() === "администратор" ||
-                        userData.role?.toLowerCase() === "зам. в.о." ||
-                        userData.role?.toLowerCase() === "сотрудник в.о." ||
-                        userData.role?.toLowerCase() ===
-                          "руководитель с.о.") && (
-                        <div className={style.create_direction__organizers}>
-                          <button onClick={() => setShowPageIndex(3)}>
-                            Участники направления
-                          </button>
-                        </div>
-                      ))}
                   </div>
 
                   {directing?.admins?.includes(userData._id) &&

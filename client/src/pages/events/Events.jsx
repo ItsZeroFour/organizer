@@ -137,7 +137,16 @@ const Events = ({ userData }) => {
       )
     : [];
 
-  console.log(state);
+  const clearDateFilter = () => {
+    setState([
+      {
+        startDate: new Date(),
+        endDate: addMonths(new Date(), 1),
+        key: "selection",
+      },
+    ]);
+    setDateFilterEnabled(false);
+  };
 
   return (
     <section className={style.events} ref={ref}>
@@ -171,6 +180,8 @@ const Events = ({ userData }) => {
                           <button
                             onClick={() => setOpen(!open)}
                           >{`${formattedStart} - ${formattedEnd}`}</button>
+
+                          <button onClick={clearDateFilter}>Очистить</button>
                         </div>
 
                         {open && (

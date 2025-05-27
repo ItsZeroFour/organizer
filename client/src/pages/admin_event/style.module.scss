@@ -1,5 +1,5 @@
 .admin_event__wrapper {
-  margin-top: 30px;
+  margin-top: 10px;
   margin-bottom: 60px;
 
   form {
@@ -62,23 +62,28 @@
 
 .admin_event__wrapper {
   button {
-    margin-top: 60px;
-    width: 100%;
-    padding: 10px;
-    background: var(--color-blue);
-    border-radius: 5px;
-    color: var(--color-white);
+    &:not(:first-child) {
+      margin-top: 60px;
+      width: 100%;
+      padding: 10px;
+      background: var(--color-blue);
+      border-radius: 5px;
+      color: var(--color-white);
+    }
   }
 
-  & > a {
-    margin-top: 60px;
-    color: var(--color-blue);
-    text-decoration: underline;
+  & > button {
+    &:first-child {
+      display: block;
+      margin-top: 60px;
+      color: var(--color-blue);
+      background: none !important;
+      text-decoration: underline;
+    }
   }
 }
 
 .create_direction__people {
-  margin-top: 60px;
   margin-bottom: 40px;
 }
 
@@ -186,5 +191,5 @@
 }
 
 .admin_direction__wrapper {
-  margin-top: 40px;
+  margin-top: 20px;
 }

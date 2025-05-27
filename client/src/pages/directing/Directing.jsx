@@ -118,7 +118,7 @@ const Directing = ({ userData }) => {
                       <p>{directing.description}</p>
 
                       {userData?.role === "Студент" && (
-                        <React.Fragment>
+                        <div className={style.directing__buttons}>
                           <button
                             onClick={addUserToApplications}
                             disabled={
@@ -141,7 +141,7 @@ const Directing = ({ userData }) => {
                               Отменить заявку
                             </button>
                           )}
-                        </React.Fragment>
+                        </div>
                       )}
 
                       {userData &&
