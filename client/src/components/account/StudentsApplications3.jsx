@@ -2,10 +2,12 @@ import React, { useEffect, useState } from "react";
 import style from "./style.module.scss";
 import axios from "../../utils/axios";
 import { Link } from "react-router-dom";
+import Notification from "../notification/Notification";
 
 const StudentsApplications = ({ userData }) => {
   const [applications, setApplications] = useState(null);
   const [loadingApplications, setLoadingApplications] = useState(false);
+  const [showNotificationDecline, setShowNotificationDecline] = useState(false);
 
   useEffect(() => {
     const getStudentApplications = async () => {
@@ -23,7 +25,6 @@ const StudentsApplications = ({ userData }) => {
         }
       } catch (error) {
         setLoadingApplications(false);
-        alert(`Произошла ошибка: ${error.response.data.message}`);
       }
     };
 
@@ -43,56 +44,54 @@ const StudentsApplications = ({ userData }) => {
       );
 
       if (response.status === 200) {
-        alert("Вы отменили заявку");
-        window.location.reload();
+        setShowNotificationDecline(true);
       }
     } catch (err) {
       console.log(err);
-      alert("Не удалось отменить заявку");
     }
   };
 
   return (
     <div className={style.admins_directing}>
-      <div className="container">
-        <div
-          className={`${style.admins_directing__wrapper} ${style.admins_directing__wrapper_2}`}
-        >
-          <h3>Вы подали заявку на направления:</h3>
-          {loadingApplications ? (
-            <p>Загрузка направлений...</p>
-          ) : (
-            applications && (
-              <ul>
-                {applications.map(
-                  ({ name, description, _id, start, finish }) => (
-                    <li key={_id}>
-                      <Link to={`/directing/${_id}`}>
-                        <h3>{name}</h3>
-                        <p>
-                          {description.length > 200
-                            ? `${description.slice(0, 200)}...`
-                            : description}
-                        </p>
+      {showNotificationDecline && (
+        <Notification title={"Успешно!"} text={"Вы отменили заявку!"} />
+      )}
 
-                        <p>
-                          {start} - {finish}
-                        </p>
-                      </Link>
+      <div
+        className={`${style.admins_directing__wrapper} ${style.admins_directing__wrapper_2}`}
+      >
+        <h3>Вы подали заявку на студенческие объединения:</h3>
+        {loadingApplications ? (
+          <p>Загрузка направлений...</p>
+        ) : (
+          applications && (
+            <ul>
+              {applications.map(({ name, description, _id, start, finish }) => (
+                <li key={_id}>
+                  <Link to={`/directing/${_id}`}>
+                    <h3>{name}</h3>
+                    <p>
+                      {description.length > 200
+                        ? `${description.slice(0, 200)}...`
+                        : description}
+                    </p>
 
-                      <button
-                        style={{ background: "red" }}
-                        onClick={() => concelApplication(_id)}
-                      >
-                        Отменить
-                      </button>
-                    </li>
-                  )
-                )}
-              </ul>
-            )
-          )}
-        </div>
+                    <p>
+                      {start} - {finish}
+                    </p>
+                  </Link>
+
+                  <button
+                    style={{ background: "red" }}
+                    onClick={() => concelApplication(_id)}
+                  >
+                    Отменить
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )
+        )}
       </div>
     </div>
   );

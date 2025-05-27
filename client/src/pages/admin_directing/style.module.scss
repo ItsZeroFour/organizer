@@ -1,5 +1,5 @@
 .admin_direction__wrapper {
-  margin-top: 40px;
+  margin-top: 20px;
   margin-bottom: 60px;
 
   form {
@@ -202,14 +202,14 @@
   }
 
   input {
-    width: 80%;
+    width: 70%;
     border: 1px solid rgba(0, 0, 0, 0.1);
     padding: 10px;
     border-radius: 5px;
   }
 
   & > button {
-    width: 18%;
+    width: 28%;
     margin-left: 10px;
     padding: 9px;
     background: var(--color-blue);
@@ -259,13 +259,58 @@
           }
         }
       }
- 
+
       button {
         margin-top: 10px;
         padding: 10px 20px;
         border-radius: 20px;
         color: var(--color-white);
       }
+    }
+  }
+}
+
+.admin_direction__content {
+  input {
+    margin-top: 30px;
+    border: 1px solid #ccc;
+    width: 100%;
+    padding: 10px;
+    border-radius: 15px;
+  }
+}
+
+.admin_direction__wrapper {
+  & > a {
+    color: var(--color-blue);
+  }
+}
+
+.admin_direction__main {
+  display: flex;
+  gap: 10px;
+}
+
+.admin_direction__buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  margin-top: 150px;
+
+  button {
+    font-size: 14px;
+    padding: 10px;
+    background: var(--color-blue);
+    color: var(--color-white);
+    border-radius: 15px;
+
+    &:last-child {
+      background: none;
+      border: 2px solid var(--color-red);
+      color: var(--color-red);
+      font-family: "Montserrat-md", sans-serif;
+      font-weight: 500;
     }
   }
 }

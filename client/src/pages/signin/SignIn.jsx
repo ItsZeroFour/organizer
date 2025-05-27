@@ -2,9 +2,11 @@ import React, { useState } from "react";
 import style from "./style.module.scss";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "../../utils/axios";
+import NotificationNoReload from "../../components/notification/NotificationNoReload";
 
 const SignIn = () => {
   const [credentials, setCredentials] = useState({ email: "", password: "" });
+  const [showNotification, setShowNotification] = useState(false);
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -18,7 +20,7 @@ const SignIn = () => {
     const { email, password } = credentials;
 
     if (!email || !password) {
-      alert("Пожалуйста, заполните все поля");
+      setShowNotification(true);
       return;
     }
 
@@ -29,20 +31,23 @@ const SignIn = () => {
       );
       if (res.status === 200) {
         localStorage.setItem("token", res.data.token);
-        // alert("Вы успешно вошли!");
         navigate("/");
         window.location.reload();
       }
     } catch (error) {
-      alert(
-        `Произошла ошибка: ${error.response?.data?.message || error.message}`
-      );
       console.error(error);
     }
   };
 
   return (
     <section className={style.signin}>
+      {showNotification && (
+        <NotificationNoReload
+          title={"Ошибка!"}
+          text={"Пожалуйста, заполните все поля!"}
+        />
+      )}
+
       <div className="container">
         <div className={style.signin__wrapper}>
           <div className={style.signin__content}>

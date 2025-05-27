@@ -2,10 +2,19 @@ import React, { useEffect, useState } from "react";
 import style from "./style.module.scss";
 import axios from "../../utils/axios";
 import { Link } from "react-router-dom";
+import Notification from "../notification/Notification";
 
 const StudentsApplications = ({ userData }) => {
   const [applications, setApplications] = useState(null);
   const [loadingApplications, setLoadingApplications] = useState(false);
+
+  const [showNotificationAccept1, setShowNotificationAccept1] = useState(false);
+  const [showNotificationAccept2, setShowNotificationAccept2] = useState(false);
+
+  const [showNotificationDecline1, setShowNotificationDecline1] =
+    useState(false);
+  const [showNotificationDecline2, setShowNotificationDecline2] =
+    useState(false);
 
   useEffect(() => {
     const getStudentApplications = async () => {
@@ -21,7 +30,6 @@ const StudentsApplications = ({ userData }) => {
         }
       } catch (error) {
         setLoadingApplications(false);
-        alert(`Произошла ошибка: ${error?.response?.data.message}`);
       }
     };
 
@@ -39,13 +47,11 @@ const StudentsApplications = ({ userData }) => {
       );
 
       if (response.status === 200) {
-        alert("Приглашение успешно принято!");
-        window.location.reload();
+        setShowNotificationAccept1(true);
       } else {
-        alert("Не удалось принять приглашение");
+        setShowNotificationAccept2(true);
       }
     } catch (error) {
-      alert(`Произошла ошибка: ${error?.response?.data.message}`);
       console.error("Ошибка загрузки файла:", error);
     }
   };
@@ -61,58 +67,81 @@ const StudentsApplications = ({ userData }) => {
       );
 
       if (response.status === 200) {
-        alert("Приглашение успешно отклонено!");
-        window.location.reload();
+        setShowNotificationDecline1(true);
       } else {
-        alert("Не удалось отклонить приглашение");
+        setShowNotificationDecline2(true);
       }
     } catch (error) {
-      alert(`Произошла ошибка: ${error?.response?.data.message}`);
+      console.log(error);
     }
   };
 
   return (
     <div className={style.admins_directing}>
-      <div className="container">
-        <div
-          className={`${style.admins_directing__wrapper} ${style.admins_directing__wrapper_2}`}
-        >
-          <h3>Вас пригласили:</h3>
-          {loadingApplications ? (
-            <p>Загрузка мероприятий...</p>
-          ) : (
-            applications && (
-              <ul>
-                {applications.map(
-                  ({ name, description, _id, start, finish }) => (
-                    <li key={_id}>
-                      <Link to={`/event/${_id}`}>
-                        <h3>{name}</h3>
-                        <p>
-                          {description.length > 200
-                            ? `${description.slice(0, 200)}...`
-                            : description}
-                        </p>
+      {showNotificationAccept1 && (
+        <Notification
+          title={"Успешно!"}
+          text={"Приглашение успешно принято!"}
+        />
+      )}
 
-                        <p>
-                          {start} - {finish}
-                        </p>
-                      </Link>
+      {showNotificationAccept2 && (
+        <Notification
+          title={"Ошибка!"}
+          text={"Не удалось принять приглашение"}
+        />
+      )}
 
-                      <button onClick={() => accept(_id)}>Принять</button>
-                      <button
-                        style={{ background: "red" }}
-                        onClick={() => cancel(_id)}
-                      >
-                        Отклонить
-                      </button>
-                    </li>
-                  )
-                )}
-              </ul>
-            )
-          )}
-        </div>
+      {showNotificationDecline1 && (
+        <Notification
+          title={"Успешно!"}
+          text={"Приглашение успешно отклонено!"}
+        />
+      )}
+
+      {showNotificationDecline2 && (
+        <Notification
+          title={"Ошибка!"}
+          text={"Не удалось отклонить приглашение"}
+        />
+      )}
+
+      <div
+        className={`${style.admins_directing__wrapper} ${style.admins_directing__wrapper_2}`}
+      >
+        <h3>Вас пригласили:</h3>
+        {loadingApplications ? (
+          <p>Загрузка мероприятий...</p>
+        ) : (
+          applications && (
+            <ul>
+              {applications.map(({ name, description, _id, start, finish }) => (
+                <li key={_id}>
+                  <Link to={`/event/${_id}`}>
+                    <h3>{name}</h3>
+                    <p>
+                      {description.length > 200
+                        ? `${description.slice(0, 200)}...`
+                        : description}
+                    </p>
+
+                    <p>
+                      {start} - {finish}
+                    </p>
+                  </Link>
+
+                  <button onClick={() => accept(_id)}>Принять</button>
+                  <button
+                    style={{ background: "red" }}
+                    onClick={() => cancel(_id)}
+                  >
+                    Отклонить
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )
+        )}
       </div>
     </div>
   );

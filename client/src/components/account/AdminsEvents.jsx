@@ -21,7 +21,6 @@ const AdminsDirecting = ({ userId }) => {
         }
       } catch (error) {
         setAdminsDirectindLoading(false);
-        alert(`Произошла ошибка: ${error.response.data.message}`);
         console.error("Ошибка загрузки файла:", error);
       }
     };

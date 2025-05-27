@@ -42,7 +42,6 @@ const Events = ({ userData }) => {
       } catch (err) {
         setLoadingEvents(false);
         console.log(err);
-        alert(`Произошла ошибка: ${err.response.data.message}`);
       }
     };
 

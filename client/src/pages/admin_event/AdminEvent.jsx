@@ -5,6 +5,7 @@ import style from "./style.module.scss";
 import { useDropzone } from "react-dropzone";
 import { useNavigate } from "react-router-dom";
 import InputMask from "react-input-mask";
+import Notification from "../../components/notification/Notification";
 
 const AdminEvent = () => {
   const [name, setName] = useState("");
@@ -13,6 +14,7 @@ const AdminEvent = () => {
   const [startTime, setStartTime] = useState("");
   const [finishDate, setFinishDate] = useState("");
   const [finishTime, setFinishTime] = useState("");
+  const [dateApplicationFinish, setApplicationDateFinish] = useState("");
   const [members, setMembers] = useState([]);
   const [applications, setApplications] = useState([]);
   const [imagePath, setImagePath] = useState("");
@@ -58,6 +60,16 @@ const AdminEvent = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
 
+  const [searchMemberTerm, setSearchMemberTerm] = useState("");
+  const [searchInviteTerm, setSearchInviteTerm] = useState("");
+  const [searchApplicationTerm, setSearchApplicationTerm] = useState("");
+  const [searchSentApplicationTerm, setSearchSentApplicationTerm] =
+    useState("");
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const [showNotificationDelete, setShowNotificationDelete] = useState(false);
+  const [showNotificationUpdate, setShowNotificationUpdate] = useState(false);
+
   const { id } = useParams();
 
   const navigate = useNavigate();
@@ -66,6 +78,7 @@ const AdminEvent = () => {
     const getEvent = async () => {
       try {
         setLoadingEvent(true);
+
         const response = await axios.get(
           `${process.env.REACT_APP_SERVER_URL}/event/get/${id}`
         );
@@ -84,6 +97,8 @@ const AdminEvent = () => {
           setContact_email(response.data.contact_email);
           setContact_work(response.data.contact_work);
 
+          setApplicationDateFinish(response.data.finish_applications);
+
           const [startDate, startTime] = response.data.start.split(", ");
           setStartDate(startDate);
           setStartTime(startTime);
@@ -97,7 +112,7 @@ const AdminEvent = () => {
       } catch (error) {
         console.log(error);
         setLoadingEvent(false);
-        alert(`Произошла ошибка: ${error?.response?.data.message}`);
+        return navigate("/");
       }
     };
 
@@ -114,6 +129,7 @@ const AdminEvent = () => {
           imagePath: imagePath,
           start: `${startDate}, ${startTime}`,
           finish: `${finishDate}, ${finishTime}`,
+          finish_applications: dateApplicationFinish,
           applications: applications,
           members: members,
           userApplications: userApplications,
@@ -122,11 +138,10 @@ const AdminEvent = () => {
       );
 
       if (directing.status === 200) {
-        alert("Мероприятие успешно обновлено!");
+        setShowNotificationUpdate(true);
       }
     } catch (error) {
       console.log(error);
-      alert(`Произошла ошибка: ${error?.response?.data.message}`);
     }
   };
 
@@ -146,7 +161,6 @@ const AdminEvent = () => {
       } catch (error) {
         console.log(error);
         setLoadingMembers(false);
-        alert(`Произошла ошибка: ${error?.response?.data.message}`);
       }
     };
 
@@ -169,7 +183,6 @@ const AdminEvent = () => {
       } catch (error) {
         console.log(error);
         setLoadingUserApplicationsFull(false);
-        alert(`Произошла ошибка: ${error?.response?.data.message}`);
       }
     };
 
@@ -188,7 +201,6 @@ const AdminEvent = () => {
 
       setImagePath(response.data.path);
     } catch (error) {
-      alert(`Произошла ошибка: ${error?.response?.data.message}`);
       console.error("Ошибка загрузки файла:", error);
     }
   };
@@ -207,7 +219,6 @@ const AdminEvent = () => {
       } catch (error) {
         console.log(error);
         setLoadingOrganizers(false);
-        alert(`Произошла ошибка: ${error?.response?.data.message}`);
       }
     };
 
@@ -227,8 +238,7 @@ const AdminEvent = () => {
           setLoadingStudents(false);
         }
       } catch (error) {
-        alert(`Произошла ошибка: ${error?.response?.data.message}`);
-        console.error("Ошибка загрузки файла:", error);
+        console.error("Ошибка:", error);
         setLoadingStudents(false);
       }
     };
@@ -249,7 +259,6 @@ const AdminEvent = () => {
           setLoadingApplications(false);
         }
       } catch (error) {
-        alert(`Произошла ошибка: ${error?.response?.data.message}`);
         console.error("Ошибка загрузки файла:", error);
         setLoadingApplications(false);
       }
@@ -271,7 +280,6 @@ const AdminEvent = () => {
           setLoadingAdmins(false);
         }
       } catch (error) {
-        alert(`Произошла ошибка: ${error?.response?.data.message}`);
         console.error("Ошибка загрузки файла:", error);
         setLoadingAdmins(false);
       }
@@ -282,20 +290,19 @@ const AdminEvent = () => {
 
   const deleteEvent = async () => {
     try {
-      const isDelete = window.confirm("Вы точно хотите удалить мероприятие?");
+      // const isDelete = window.confirm("Вы точно хотите удалить мероприятие?");
 
-      if (!isDelete) return;
+      // if (!isDelete) return;
 
       const response = await axios.delete(`/event/delete/${id}`);
 
       if (response.status === 200) {
-        alert("Успешно удалено!");
-        navigate("/");
-        return window.location.reload();
+        setShowNotificationDelete(true);
+        // navigate("/");
+        // return window.location.reload();
       }
     } catch (err) {
       console.log(err);
-      alert("Не удалось удалить мероприятие");
     }
   };
 
@@ -332,6 +339,36 @@ const AdminEvent = () => {
       setIsLoading(false);
     }
   };
+
+  const filteredMembers = Array.isArray(membersFull)
+    ? membersFull.filter(({ fullName }) =>
+        fullName.toLowerCase().includes(searchMemberTerm.toLowerCase())
+      )
+    : [];
+
+  const filteredStudents = Array.isArray(students)
+    ? students.filter(({ fullName }) =>
+        fullName.toLowerCase().includes(searchInviteTerm.toLowerCase())
+      )
+    : [];
+
+  const filteredApplications = Array.isArray(userApplicationsFull)
+    ? userApplicationsFull.filter(({ fullName }) =>
+        fullName.toLowerCase().includes(searchApplicationTerm.toLowerCase())
+      )
+    : [];
+
+  const filteredApplications2 = Array.isArray(applicationsFull)
+    ? applicationsFull.filter(({ fullName }) =>
+        fullName.toLowerCase().includes(searchSentApplicationTerm.toLowerCase())
+      )
+    : [];
+
+  const filteredOrganizers = Array.isArray(organizers)
+    ? organizers.filter(({ fullName }) =>
+        fullName.toLowerCase().includes(searchTerm.toLowerCase())
+      )
+    : [];
 
   const onDropMain = (acceptedFiles) =>
     uploadImage(acceptedFiles, setImagePath);
@@ -386,10 +423,22 @@ const AdminEvent = () => {
     setAdmins((prevAdmins) => prevAdmins.filter((adminId) => adminId !== id));
   };
 
-  console.log(membersFull);
-
   return (
     <section className={style.admin_event}>
+      {showNotificationDelete && (
+        <Notification
+          title={"Успешно!"}
+          text={"Мероприятие удалено успешно!"}
+        />
+      )}
+
+      {showNotificationUpdate && (
+        <Notification
+          title={"Успешно!"}
+          text={"Мероприятие успешно обновлено!"}
+        />
+      )}
+
       <div className="container">
         {showExcelDownloadPage ? (
           <div className={style.admin_event__wrapper}>
@@ -478,7 +527,7 @@ const AdminEvent = () => {
                   Отмена
                 </button>
                 <button onClick={handleSubmit} disabled={isLoading}>
-                  Создать
+                  Создать отчет
                 </button>
               </div>
             </div>
@@ -487,6 +536,10 @@ const AdminEvent = () => {
           <React.Fragment>
             {showPageIndex === 0 ? (
               <div className={style.admin_event__wrapper}>
+                <Link to="" onClick={() => navigate(-1)}>
+                  Вернуться назад
+                </Link>
+
                 {loadingEvent ? (
                   <p>Загрузка...</p>
                 ) : (
@@ -538,21 +591,18 @@ const AdminEvent = () => {
                           }
                           placeholder="Описание"
                         />
-
                         <input
                           type="text"
                           onChange={(event) => setDirecting(event.target.value)}
                           value={directing}
                           placeholder="Направление (например, патриотическое)"
                         />
-
                         <input
                           type="text"
                           onChange={(event) => setPlace(event.target.value)}
                           value={place}
                           placeholder="Место проведения"
                         />
-
                         <input
                           type="text"
                           onChange={(event) =>
@@ -561,7 +611,6 @@ const AdminEvent = () => {
                           value={contact_name}
                           placeholder="Контактное имя"
                         />
-
                         <input
                           type="text"
                           onChange={(event) =>
@@ -570,7 +619,6 @@ const AdminEvent = () => {
                           value={contact_email}
                           placeholder="Контактный email"
                         />
-
                         <input
                           type="text"
                           onChange={(event) =>
@@ -579,7 +627,6 @@ const AdminEvent = () => {
                           value={contact_work}
                           placeholder="Контактное место работы"
                         />
-
                         <div>
                           <p>Дата начала</p>
                           <InputMask
@@ -591,7 +638,6 @@ const AdminEvent = () => {
                             }
                           />
                         </div>
-
                         <div>
                           <p>Время начала</p>
                           <InputMask
@@ -603,7 +649,6 @@ const AdminEvent = () => {
                             }
                           />
                         </div>
-
                         <div>
                           <p>Дата конца</p>
                           <InputMask
@@ -615,7 +660,6 @@ const AdminEvent = () => {
                             }
                           />
                         </div>
-
                         <div>
                           <p>Время конца</p>
                           <InputMask
@@ -627,6 +671,17 @@ const AdminEvent = () => {
                             }
                           />
                         </div>
+                        <div>
+                          <p>Дата конца записи</p>
+                          <InputMask
+                            mask="99.99.9999"
+                            placeholder="ДД.ММ.ГГГГ"
+                            value={dateApplicationFinish}
+                            onChange={(event) =>
+                              setApplicationDateFinish(event.target.value)
+                            }
+                          />
+                        </div>{" "}
                       </form>
 
                       <div className={style.create_direction__images}>
@@ -658,7 +713,7 @@ const AdminEvent = () => {
                         onClick={() => setShowExcelDownloadPage(true)}
                         // to={`${process.env.REACT_APP_SERVER_URL}/excel-event/${id}`}
                       >
-                        Скачать отчет
+                        Создать отчет
                       </button>
 
                       <button onClick={updateEvent}>Обновить</button>
@@ -676,12 +731,19 @@ const AdminEvent = () => {
 
                   <h2>Участники мероприятия</h2>
 
+                  <input
+                    type="text"
+                    placeholder="Поиск..."
+                    value={searchMemberTerm}
+                    onChange={(e) => setSearchMemberTerm(e.target.value)}
+                  />
+
                   {loadingMembers ? (
                     <p>Загрузка участников...</p>
                   ) : (
-                    membersFull && (
+                    filteredMembers && (
                       <ul>
-                        {membersFull.map(({ fullName, role, _id }) => (
+                        {filteredMembers.map(({ fullName, role, _id }) => (
                           <li key={_id}>
                             <div>
                               <Link to={`/user/${_id}`}>
@@ -721,12 +783,19 @@ const AdminEvent = () => {
 
                   <h2>Пригласить на участие</h2>
 
+                  <input
+                    type="text"
+                    placeholder="Поиск..."
+                    value={searchInviteTerm}
+                    onChange={(e) => setSearchInviteTerm(e.target.value)}
+                  />
+
                   {loadingStudents ? (
                     <p>Загрузка студентов...</p>
                   ) : (
-                    students && (
+                    filteredStudents && (
                       <ul>
-                        {students.map(({ fullName, role, _id }) => (
+                        {filteredStudents.map(({ fullName, role, _id }) => (
                           <li key={_id}>
                             <div>
                               <Link to={`/user/${_id}`}>
@@ -766,12 +835,19 @@ const AdminEvent = () => {
 
                   <h2>Ожидают принятия</h2>
 
+                  <input
+                    type="text"
+                    placeholder="Поиск..."
+                    value={searchApplicationTerm}
+                    onChange={(e) => setSearchApplicationTerm(e.target.value)}
+                  />
+
                   {loadingUserApplicationsFull ? (
                     <p>Загрузка...</p>
                   ) : (
-                    userApplicationsFull && (
+                    filteredApplications && (
                       <ul>
-                        {userApplicationsFull.map(({ fullName, role, _id }) => (
+                        {filteredApplications.map(({ fullName, role, _id }) => (
                           <li key={_id}>
                             <div>
                               <Link to={`/user/${_id}`}>
@@ -811,37 +887,48 @@ const AdminEvent = () => {
 
                   <h2>Приглашение отправлено</h2>
 
+                  <input
+                    type="text"
+                    placeholder="Поиск..."
+                    value={searchSentApplicationTerm}
+                    onChange={(e) =>
+                      setSearchSentApplicationTerm(e.target.value)
+                    }
+                  />
+
                   {loadingApplications ? (
                     <p>Загрузка...</p>
                   ) : (
-                    applicationsFull && (
+                    filteredApplications2 && (
                       <ul>
-                        {applicationsFull.map(({ fullName, role, _id }) => (
-                          <li key={_id}>
-                            <div>
-                              <Link to={`/user/${_id}`}>
-                                <p>{role}</p>
-                                <p>{fullName}</p>
-                              </Link>
-                            </div>
+                        {filteredApplications2.map(
+                          ({ fullName, role, _id }) => (
+                            <li key={_id}>
+                              <div>
+                                <Link to={`/user/${_id}`}>
+                                  <p>{role}</p>
+                                  <p>{fullName}</p>
+                                </Link>
+                              </div>
 
-                            {applications.includes(_id) ? (
-                              <button
-                                onClick={() => removeApplications(_id)}
-                                style={{ backgroundColor: "red" }}
-                              >
-                                Удалить
-                              </button>
-                            ) : (
-                              <button
-                                onClick={() => addApplications(_id)}
-                                style={{ backgroundColor: "#009dff" }}
-                              >
-                                Добавить
-                              </button>
-                            )}
-                          </li>
-                        ))}
+                              {applications.includes(_id) ? (
+                                <button
+                                  onClick={() => removeApplications(_id)}
+                                  style={{ backgroundColor: "red" }}
+                                >
+                                  Удалить
+                                </button>
+                              ) : (
+                                <button
+                                  onClick={() => addApplications(_id)}
+                                  style={{ backgroundColor: "#009dff" }}
+                                >
+                                  Добавить
+                                </button>
+                              )}
+                            </li>
+                          )
+                        )}
                       </ul>
                     )
                   )}
@@ -856,12 +943,19 @@ const AdminEvent = () => {
 
                   <h2>Добавить ответственных</h2>
 
+                  <input
+                    type="text"
+                    placeholder="Поиск..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                  />
+
                   {loadingAdmins ? (
                     <p>Загрузка руководителей...</p>
                   ) : (
-                    organizers && (
+                    filteredOrganizers && (
                       <ul>
-                        {organizers.map(({ fullName, role, _id }) => (
+                        {filteredOrganizers.map(({ fullName, role, _id }) => (
                           <li key={_id}>
                             <div>
                               <p>{role}</p>

@@ -10,6 +10,7 @@ import StudentsApplications from "../../components/account/StudentsApplications"
 import StudentsApplications2 from "../../components/account/StudentsApplications2";
 import StudentsApplications3 from "../../components/account/StudentsApplications3";
 import StudentsEvents from "../../components/account/StudentsEvents";
+import NotificationNoReload from "../../components/notification/NotificationNoReload";
 
 const Account = ({ userData }) => {
   const [group, setGroup] = useState(userData.group || "Не указано");
@@ -18,6 +19,7 @@ const Account = ({ userData }) => {
     userData.birthdate || "Не указано"
   );
   const [showPageIndex, setShowPageIndex] = useState(0);
+  const [showNotificationUpdate, setShowNotificationUpdate] = useState(false);
 
   const navigate = useNavigate();
 
@@ -33,16 +35,23 @@ const Account = ({ userData }) => {
       );
 
       if (update.status === 200) {
-        alert("Успешно!");
+        setShowNotificationUpdate(true);
       }
     } catch (error) {
-      alert(`Произошла ошибка: ${error.response.data.message}`);
       console.error("Ошибка загрузки файла:", error);
     }
   };
 
   return (
     <section className={style.account}>
+      {showNotificationUpdate && (
+        <NotificationNoReload
+          title={"Успешно!"}
+          text={"Профиль успешно обновлен!"}
+          open={setShowNotificationUpdate}
+        />
+      )}
+
       <div className="container">
         <div className={style.account__wrapper}>
           <div className={style.account__content}>
@@ -57,7 +66,7 @@ const Account = ({ userData }) => {
                 onClick={() => setShowPageIndex(1)}
                 className={showPageIndex === 1 && style.active}
               >
-                Мои направления
+                Мои студенческие объединения
               </button>
               <button
                 onClick={() => setShowPageIndex(2)}

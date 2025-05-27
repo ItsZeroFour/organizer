@@ -9,6 +9,7 @@ import info from "../../assets/info.svg";
 import user from "../../assets/user_2.svg";
 import message from "../../assets/message.svg";
 import bag from "../../assets/bag.svg";
+import Notification from "../../components/notification/Notification";
 
 const Event = ({ userData }) => {
   const [event, setEvent] = useState(null);
@@ -16,6 +17,10 @@ const Event = ({ userData }) => {
   const [membersFull, setMembersFull] = useState(null);
   const [loadingMembers, setLoadingMembers] = useState(false);
   const [timeLeft, setTimeLeft] = useState("");
+  const [isEnd, setIsEnd] = useState(false);
+
+  const [showNotification1, setShowNotification1] = useState(false);
+  const [showNotification2, setShowNotification2] = useState(false);
 
   const { id } = useParams();
 
@@ -36,7 +41,6 @@ const Event = ({ userData }) => {
       } catch (error) {
         console.log(error);
         setLoadingEvent(false);
-        alert(`Произошла ошибка: ${error.response.data.message}`);
       }
     };
 
@@ -59,7 +63,6 @@ const Event = ({ userData }) => {
       } catch (error) {
         console.log(error);
         setLoadingMembers(false);
-        alert(`Произошла ошибка: ${error?.response?.data.message}`);
       }
     };
 
@@ -73,30 +76,19 @@ const Event = ({ userData }) => {
       );
 
       if (response.status === 200) {
-        alert("Заявка успешно подана!");
-        window.location.reload();
+        setShowNotification1(true);
       }
     } catch (error) {
       console.log(error);
-      alert(`Произошла ошибка: ${error.response.data.message}`);
     }
   };
 
   const concelApplication = async () => {
     try {
-      const isConfirm = window.confirm(
-        "Вы уверены что хотите отменить заявку?"
-      );
-
-      if (!isConfirm) return;
-
       const response = await axios.patch(`/event/cancel-application/${id}`);
 
       if (response.status === 200) {
-        alert("Вы отменили заявку");
-        console.log(123);
-
-        // window.location.reload();
+        setShowNotification2(true);
       } else {
         const response = await axios.put(
           `${process.env.REACT_APP_SERVER_URL}/event/cancel-from-applications`,
@@ -107,30 +99,25 @@ const Event = ({ userData }) => {
         );
 
         if (response.status === 200) {
-          alert("Вы отменили заявку");
-          window.location.reload();
+          setShowNotification2(true);
         }
       }
     } catch (err) {
       console.log(err);
-      alert("Не удалось отменить заявку");
     }
   };
 
   useEffect(() => {
     let interval;
 
-    if (event && event.finish) {
+    if (event && event.finish_applications) {
       const updateTimer = () => {
-        const [datePart, timePart] = event.finish.split(", ");
+        const [datePart, timePart] = event.finish_applications.split(", ");
         const [day, month, year] = datePart.split(".");
-        const [hours, minutes] = timePart.split(":");
         const finishDate = new Date(
           parseInt(year),
           parseInt(month) - 1,
-          parseInt(day),
-          parseInt(hours),
-          parseInt(minutes)
+          parseInt(day)
         );
 
         const now = new Date();
@@ -139,6 +126,7 @@ const Event = ({ userData }) => {
         if (diff <= 0) {
           setTimeLeft("Срок завершён");
           clearInterval(interval);
+          setIsEnd(true);
           return;
         }
 
@@ -163,6 +151,14 @@ const Event = ({ userData }) => {
 
   return (
     <div className={style.event}>
+      {showNotification1 && (
+        <Notification title={"Успешно!"} text={"Заявка успешно подана!"} />
+      )}
+
+      {showNotification2 && (
+        <Notification title={"Успешно!"} text={"Вы отменили заявку"} />
+      )}
+
       <div className={style.event__wrapper}>
         <div className="container">
           {loadingEvent
@@ -203,10 +199,12 @@ const Event = ({ userData }) => {
                           <React.Fragment>
                             <button
                               onClick={handleJoinEvent}
+                              style={isEnd ? { opacity: 0.8 } : { opacity: 1 }}
                               disabled={
                                 event.userApplications.includes(userData._id) ||
                                 event.members.includes(userData._id) ||
-                                event.applications.includes(userData._id)
+                                event.applications.includes(userData._id) ||
+                                isEnd
                               }
                             >
                               {event.applications.includes(userData._id) ||

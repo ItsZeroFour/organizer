@@ -33,7 +33,6 @@ const CreateDirecting = () => {
       } catch (error) {
         console.log(error);
         setLoadingOrganizers(false);
-        alert(`Произошла ошибка: ${error.response.data.message}`);
       }
     };
 
@@ -57,12 +56,10 @@ const CreateDirecting = () => {
       );
 
       if (directing.status === 200) {
-        alert("Направление успешно создано!");
         navigate("/");
       }
     } catch (error) {
       console.log(error);
-      alert(`Произошла ошибка: ${error.response.data.message}`);
     }
   };
 
@@ -78,7 +75,6 @@ const CreateDirecting = () => {
 
       setImagePath(response.data.path);
     } catch (error) {
-      alert(`Произошла ошибка: ${error.response.data.message}`);
       console.error("Ошибка загрузки файла:", error);
     }
   };
@@ -96,7 +92,6 @@ const CreateDirecting = () => {
           return response.data.path;
         } catch (error) {
           console.error("Ошибка загрузки файла:", error);
-          alert(`Произошла ошибка: ${error.response.data.message}`);
           return null;
         }
       })
@@ -151,13 +146,13 @@ const CreateDirecting = () => {
     <section className={style.create_direction}>
       <div className="container">
         <div className={style.create_direction__wrapper}>
-          <h1>Создание направления</h1>
+          <h1>Создание студенческого объединения</h1>
 
           <form>
             <input
               type="text"
               onChange={(event) => setName(event.target.value)}
-              placeholder="Название направления"
+              placeholder="Название студенческого объединения"
             />
             <textarea
               onChange={(event) => setFirstDescription(event.target.value)}
@@ -290,7 +285,9 @@ const CreateDirecting = () => {
             )}
           </div>
 
-          <button onClick={createDirecting}>Создать направление</button>
+          <button onClick={createDirecting}>
+            Создать студенческое объединение
+          </button>
         </div>
       </div>
     </section>

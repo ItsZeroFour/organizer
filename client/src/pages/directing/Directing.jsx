@@ -2,6 +2,7 @@ import React, { useEffect, useState, useCallback } from "react";
 import style from "./style.module.scss";
 import { Link, useParams } from "react-router-dom";
 import axios from "../../utils/axios";
+import Notification from "../../components/notification/Notification";
 
 const Directing = ({ userData }) => {
   const [directing, setDirecting] = useState(null);
@@ -9,6 +10,9 @@ const Directing = ({ userData }) => {
 
   const [admins, setAdmins] = useState([]);
   const [adminsLoading, setAdminsLoading] = useState(false);
+
+  const [showNotification1, setShowNotification1] = useState(false);
+  const [showNotification2, setShowNotification2] = useState(false);
 
   const { id } = useParams();
 
@@ -20,9 +24,6 @@ const Directing = ({ userData }) => {
       );
       setDirecting(response.data);
     } catch (error) {
-      alert(
-        `Произошла ошибка: ${error.response?.data?.message || error.message}`
-      );
       console.error(error);
     } finally {
       setLoadingDirecting(false);
@@ -40,14 +41,10 @@ const Directing = ({ userData }) => {
       );
 
       if (pushUser.status === 200) {
-        alert("Ваша заявка успешно подана, ожидайте!");
-        window.location.reload();
+        setShowNotification1(true);
       }
     } catch (error) {
       console.log(error);
-      alert(
-        `Произошла ошибка: ${error.response?.data?.message || error.message}`
-      );
     }
   };
 
@@ -66,9 +63,6 @@ const Directing = ({ userData }) => {
       } catch (error) {
         setAdminsLoading(false);
         console.log(error);
-        alert(
-          `Произошла ошибка: ${error.response?.data?.message || error.message}`
-        );
       }
     };
 
@@ -77,28 +71,30 @@ const Directing = ({ userData }) => {
 
   const concelApplication = async () => {
     try {
-      const isConfirm = window.confirm(
-        "Вы уверены что хотите отменить заявку?"
-      );
-
-      if (!isConfirm) return;
-
       const response = await axios.patch(`/directing/cancel-application/${id}`);
 
       console.log(response);
 
       if (response.status === 200) {
-        alert("Вы отменили заявку");
-        window.location.reload();
+        setShowNotification2(true);
       }
     } catch (err) {
       console.log(err);
-      alert("Не удалось отменить заявку");
     }
   };
 
   return (
     <div className={style.directing}>
+      {showNotification1 && (
+        <Notification
+          title={"Успешно!"}
+          text={"Ваша заявка успешно подана, ожидайте!"}
+        />
+      )}
+
+      {showNotification2 && (
+        <Notification title={"Успешно!"} text={"Вы отменили заявку!"} />
+      )}
       <div className={style.directing__wrapper}>
         {loadingDirecting ? (
           <p>Загрузка...</p>

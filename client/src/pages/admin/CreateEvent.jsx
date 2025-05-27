@@ -4,6 +4,7 @@ import style from "./style.module.scss";
 import { useDropzone } from "react-dropzone";
 import { useNavigate } from "react-router-dom";
 import InputMask from "react-input-mask";
+import NotificationNoReload from "../../components/notification/NotificationNoReload";
 
 const CreateEvent = ({ userData }) => {
   const [name, setName] = useState("");
@@ -11,6 +12,7 @@ const CreateEvent = ({ userData }) => {
   const [mainImagePath, setMainImagePath] = useState(null);
   const [dateStart, setDateStart] = useState("");
   const [dateFinish, setDateFinish] = useState("");
+  const [dateApplicationFinish, setApplicationDateFinish] = useState("");
   const [timeStart, setTimeStart] = useState("");
   const [timeFinish, setTimeFinish] = useState("");
   const [directing, setDirecting] = useState("");
@@ -20,6 +22,9 @@ const CreateEvent = ({ userData }) => {
   const [contact_work, setContact_work] = useState("");
   const [loadingOrganizers, setLoadingOrganizers] = useState(false);
   const [organizers, setOrganizers] = useState(null);
+
+  const [showNotificationOrganizers, setShowNotificationOrganizers] =
+    useState(false);
 
   const [admins, setAdmins] = useState([]);
 
@@ -51,7 +56,6 @@ const CreateEvent = ({ userData }) => {
       } catch (error) {
         console.log(error);
         setLoadingOrganizers(false);
-        alert(`Произошла ошибка: ${error.response.data.message}`);
       }
     };
 
@@ -70,7 +74,6 @@ const CreateEvent = ({ userData }) => {
 
       setImagePath(response.data.path);
     } catch (error) {
-      alert(`Произошла ошибка: ${error.response.data.message}`);
       console.error("Ошибка загрузки файла:", error);
     }
   };
@@ -84,7 +87,7 @@ const CreateEvent = ({ userData }) => {
   const createEvent = async () => {
     try {
       if (admins.length === 0) {
-        return alert("Должен быть хотя бы 1 ответственный");
+        setShowNotificationOrganizers(true);
       }
 
       const fetch = await axios.post(
@@ -95,6 +98,7 @@ const CreateEvent = ({ userData }) => {
           imagePath: mainImagePath,
           start: `${dateStart}, ${timeStart}`,
           finish: `${dateFinish}, ${timeFinish}`,
+          finish_applications: dateApplicationFinish,
           directing: directing,
           place: place,
           contact_name: contact_name,
@@ -105,12 +109,10 @@ const CreateEvent = ({ userData }) => {
       );
 
       if (fetch.status === 200) {
-        alert("Мероприятие успешно создано!");
         navigate("/events");
       }
     } catch (error) {
       console.log(error);
-      alert(`Произошла ошибка: ${error.response?.data?.message}`);
     }
   };
 
@@ -124,6 +126,14 @@ const CreateEvent = ({ userData }) => {
 
   return (
     <section className={style.create_direction}>
+      {showNotificationOrganizers && (
+        <NotificationNoReload
+          title={"Ошибка!"}
+          text={"Должен быть хотя бы 1 ответственный"}
+          open={setShowNotificationOrganizers}
+        />
+      )}
+
       <div className="container">
         <div className={style.create_direction__wrapper}>
           <h1>Создание мероприятия</h1>
@@ -213,6 +223,16 @@ const CreateEvent = ({ userData }) => {
                 placeholder="00:00"
                 value={timeFinish}
                 onChange={(event) => setTimeFinish(event.target.value)}
+              />
+            </div>
+
+            <div>
+              <p>Дата конца записи</p>
+              <InputMask
+                mask="99.99.9999"
+                placeholder="ДД.ММ.ГГГГ"
+                value={dateStart}
+                onChange={(event) => setDateStart(event.target.value)}
               />
             </div>
           </form>

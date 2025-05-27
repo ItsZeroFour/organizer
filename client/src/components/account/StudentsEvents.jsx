@@ -21,7 +21,6 @@ const StudentsEvents = ({ userData, userId }) => {
         }
       } catch (error) {
         setLoadingApplications(false);
-        // alert(`Произошла ошибка: ${error.response.data.message}`);
         console.error("Ошибка загрузки файла:", error);
       }
     };
@@ -31,38 +30,34 @@ const StudentsEvents = ({ userData, userId }) => {
 
   return (
     <div className={style.admins_directing}>
-      <div className="container">
-        <div
-          className={`${style.admins_directing__wrapper} ${style.admins_directing__wrapper_2}`}
-        >
-          <h3>Вы учавствуете:</h3>
-          {loadingApplications ? (
-            <p>Загрузка мероприятий...</p>
-          ) : (
-            applications && (
-              <ul>
-                {applications.map(
-                  ({ name, description, _id, start, finish }) => (
-                    <li key={_id}>
-                      <Link to={`/event/${_id}`}>
-                        <h3>{name}</h3>
-                        <p>
-                          {description.length > 200
-                            ? `${description.slice(0, 200)}...`
-                            : description}
-                        </p>
+      <div
+        className={`${style.admins_directing__wrapper} ${style.admins_directing__wrapper_2}`}
+      >
+        <h3>Вы учавствуете:</h3>
+        {loadingApplications ? (
+          <p>Загрузка мероприятий...</p>
+        ) : (
+          applications && (
+            <ul>
+              {applications.map(({ name, description, _id, start, finish }) => (
+                <li key={_id}>
+                  <Link to={`/event/${_id}`}>
+                    <h3>{name}</h3>
+                    <p>
+                      {description.length > 200
+                        ? `${description.slice(0, 200)}...`
+                        : description}
+                    </p>
 
-                        <p>
-                          {start} - {finish}
-                        </p>
-                      </Link>
-                    </li>
-                  )
-                )}
-              </ul>
-            )
-          )}
-        </div>
+                    <p>
+                      {start} - {finish}
+                    </p>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          )
+        )}
       </div>
     </div>
   );

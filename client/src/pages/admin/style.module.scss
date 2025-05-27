@@ -59,6 +59,12 @@
       border: 1px solid rgba(0, 0, 0, 0.2);
     }
 
+    div {
+      input {
+        width: 200px;
+      }
+    }
+
     textarea {
       height: 200px;
       resize: none;

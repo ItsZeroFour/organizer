@@ -23,9 +23,6 @@ const Main = ({ userData }) => {
       const uniqueSet = Array.from(new Set(allSkills));
       setUniqueSkills(uniqueSet);
     } catch (error) {
-      alert(
-        `Произошла ошибка: ${error.response?.data?.message || error.message}`
-      );
       console.error(error);
     } finally {
       setLoadingDirecting(false);
@@ -54,7 +51,7 @@ const Main = ({ userData }) => {
       <div className="container">
         <div className={style.main__wrapper}>
           {loadingDirecting ? (
-            <p>Загрузка направлений...</p>
+            <p>Загрузка...</p>
           ) : (
             <React.Fragment>
               <div className={style.main__link}>

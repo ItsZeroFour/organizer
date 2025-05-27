@@ -28,7 +28,6 @@ const UserAccount = () => {
         }
       } catch (error) {
         setLoadingUser(false);
-        alert(`Произошла ошибка: ${error.response.data.message}`);
         console.error("Ошибка загрузки файла:", error);
       }
     };

@@ -26,6 +26,11 @@ const eventSchema = new mongoose.Schema({
     required: true,
   },
 
+  finish_applications: {
+    type: String,
+    required: true,
+  },
+
   directing: {
     type: String,
     required: true,

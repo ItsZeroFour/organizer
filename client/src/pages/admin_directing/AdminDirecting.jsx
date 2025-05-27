@@ -3,6 +3,8 @@ import style from "./style.module.scss";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import axios from "../../utils/axios";
 import { useDropzone } from "react-dropzone";
+import Notification from "../../components/notification/Notification";
+import NotificationNoReload from "../../components/notification/NotificationNoReload";
 
 const AdminDirecting = ({ userData }) => {
   const [directing, setDirecting] = useState(null);
@@ -30,6 +32,15 @@ const AdminDirecting = ({ userData }) => {
   const [loadingMembers, setLoadingMembers] = useState(false);
 
   const [showPageIndex, setShowPageIndex] = useState(0);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [searchMemberTerm, setSearchMemberTerm] = useState("");
+  const [searchOrganizerTerm, setSearchOrganizerTerm] = useState("");
+
+  const [showNotificationUpdate, setShowNotificationUpdate] = useState(false);
+  const [showNotificationDelete, setShowNotificationDelete] = useState(false);
+  const [showNotificationAddUser, setShowNotificationAddUser] = useState(false);
+  const [showNotificationRemoveUser, setShowNotificationRemoveUser] =
+    useState(false);
 
   const { id } = useParams();
   const navigate = useNavigate();
@@ -41,11 +52,11 @@ const AdminDirecting = ({ userData }) => {
         `${process.env.REACT_APP_SERVER_URL}/directing/get-directing/${id}`
       );
       setDirecting(response.data);
+
+      if (!response.data) navigate("/");
     } catch (error) {
-      alert(
-        `Произошла ошибка: ${error.response?.data?.message || error.message}`
-      );
-      console.error(error);
+      console.error("Ошибка", error);
+      navigate("/");
     } finally {
       setLoadingDirecting(false);
     }
@@ -69,7 +80,6 @@ const AdminDirecting = ({ userData }) => {
       } catch (error) {
         console.log(error);
         setLoadingOrganizers(false);
-        alert(`Произошла ошибка: ${error?.response?.data.message}`);
       }
     };
 
@@ -121,7 +131,6 @@ const AdminDirecting = ({ userData }) => {
         setLoadingStudens(false);
 
         console.log(error);
-        alert(`Произошла ошибка: ${error.response.data.message}`);
       }
     };
 
@@ -144,7 +153,6 @@ const AdminDirecting = ({ userData }) => {
         setLoadingMembers(false);
 
         console.log(error);
-        alert(`Произошла ошибка: ${error.response.data.message}`);
       }
     };
 
@@ -172,12 +180,9 @@ const AdminDirecting = ({ userData }) => {
       setSaving(false);
 
       if (data.status === 200) {
-        alert("Успешно обновлено!");
+        setShowNotificationUpdate(true);
       }
     } catch (error) {
-      alert(
-        `Произошла ошибка: ${error.response?.data?.message || error.message}`
-      );
       console.error(error);
     }
   };
@@ -194,10 +199,27 @@ const AdminDirecting = ({ userData }) => {
 
       setNewImagePath(response.data.path);
     } catch (error) {
-      alert(`Произошла ошибка: ${error.response.data.message}`);
       console.error("Ошибка загрузки файла:", error);
     }
   };
+
+  const filteredApplications = Array.isArray(applications)
+    ? applications.filter(({ fullName }) =>
+        fullName.toLowerCase().includes(searchTerm.toLowerCase())
+      )
+    : [];
+
+  const filteredMembers = Array.isArray(membersFull)
+    ? membersFull.filter(({ fullName }) =>
+        fullName.toLowerCase().includes(searchMemberTerm.toLowerCase())
+      )
+    : [];
+
+  const filteredOrganizers = Array.isArray(organizers)
+    ? organizers.filter(({ fullName }) =>
+        fullName.toLowerCase().includes(searchOrganizerTerm.toLowerCase())
+      )
+    : [];
 
   const uploadGalleryImages = async (acceptedFiles) => {
     const uploadedPaths = await Promise.all(
@@ -212,7 +234,6 @@ const AdminDirecting = ({ userData }) => {
           return response.data.path;
         } catch (error) {
           console.error("Ошибка загрузки файла:", error);
-          alert(`Произошла ошибка: ${error.response.data.message}`);
           return null;
         }
       })
@@ -225,20 +246,17 @@ const AdminDirecting = ({ userData }) => {
 
   const deleteDirection = async () => {
     try {
-      const isDelete = window.confirm("Вы точно хотите удалить направление?");
+      // const isDelete = window.confirm("Вы точно хотите удалить направление?");
 
-      if (!isDelete) return;
+      // if (!isDelete) return;
 
       const response = await axios.delete(`/directing/delete/${id}`);
 
       if (response.status === 200) {
-        alert("Успешно удалено!");
-        navigate("/");
-        return window.location.reload();
+        setShowNotificationDelete(true);
       }
     } catch (err) {
       console.log(err);
-      alert("Не удалось удалить мероприятие");
     }
   };
 
@@ -246,7 +264,6 @@ const AdminDirecting = ({ userData }) => {
   //   try {
   //     await axios.post(`${process.env.REACT_APP_SERVER_URL}/excel-direction/${id}`);
   //   } catch (error) {
-  //     alert(`Произошла ошибка: ${error?.response?.data.message}`);
   //     console.error("Ошибка загрузки файла:", error);
   //   }
   // };
@@ -285,7 +302,7 @@ const AdminDirecting = ({ userData }) => {
     setApplications((prevApplications) =>
       prevApplications.filter((application) => application._id !== id)
     );
-    alert("Успешно добавлен! Не забудьте сохранить изменения");
+    setShowNotificationAddUser(true);
   };
 
   const removeMember = (id) => {
@@ -293,7 +310,7 @@ const AdminDirecting = ({ userData }) => {
       prevMembers.filter((memberId) => memberId !== id)
     );
 
-    alert("Успешно удален! Не забудьте сохранить изменения");
+    setShowNotificationRemoveUser(true);
   };
 
   const addSkill = () => {
@@ -309,9 +326,43 @@ const AdminDirecting = ({ userData }) => {
 
   return (
     <section className={style.admin_direction}>
+      {showNotificationDelete && (
+        <Notification
+          title={"Успешно!"}
+          text={"Студенческое объединение удалено успешно!"}
+        />
+      )}
+
+      {showNotificationUpdate && (
+        <Notification
+          title={"Успешно!"}
+          text={"Студенческое объединение обновлено успешно!"}
+        />
+      )}
+
+      {showNotificationAddUser && (
+        <NotificationNoReload
+          title={"Успешно!"}
+          text={"Успешно добавлен! Не забудьте сохранить изменения"}
+          open={setShowNotificationAddUser}
+        />
+      )}
+
+      {showNotificationRemoveUser && (
+        <NotificationNoReload
+          title={"Успешно!"}
+          text={"Успешно удален! Не забудьте сохранить изменения"}
+          open={setShowNotificationRemoveUser}
+        />
+      )}
+
       <div className="container">
         {showPageIndex === 0 ? (
           <div className={style.admin_direction__wrapper}>
+            <Link to="" onClick={() => navigate(-1)}>
+              Вернуться назад
+            </Link>
+
             {loadingDirecting ? (
               <p>Загрузка...</p>
             ) : (
@@ -320,177 +371,175 @@ const AdminDirecting = ({ userData }) => {
               (userData?.role.toLowerCase() === "администратор" ||
                 userData?.role.toLowerCase() === "зам. в.о." ||
                 directing.admins.includes(userData._id)) && (
-                <React.Fragment>
-                  <div className={style.admin_direction__people}>
-                    {(userData.role.toLowerCase() === "зам. в.о." ||
-                      userData.role.toLowerCase() === "администратор") && (
-                      <div className={style.create_direction__organizers}>
-                        <button onClick={() => setShowPageIndex(1)}>
-                          Добавить руководителей
-                        </button>
+                <div className={style.admin_direction__main}>
+                  <div>
+                    <div className={style.admin_direction__people}>
+                      {(userData.role.toLowerCase() === "зам. в.о." ||
+                        userData.role.toLowerCase() === "администратор") && (
+                        <div className={style.create_direction__organizers}>
+                          <button onClick={() => setShowPageIndex(1)}>
+                            Добавить руководителей
+                          </button>
+                        </div>
+                      )}
+
+                      {directing?.admins?.includes(userData._id) ||
+                        ((userData.role?.toLowerCase() === "администратор" ||
+                          userData.role?.toLowerCase() === "зам. в.о." ||
+                          userData.role?.toLowerCase() === "сотрудник в.о." ||
+                          userData.role?.toLowerCase() ===
+                            "руководитель с.о.") && (
+                          <div className={style.create_direction__organizers}>
+                            <button onClick={() => setShowPageIndex(2)}>
+                              Входящие заявки студентов
+                            </button>
+                          </div>
+                        ))}
+
+                      {directing?.admins?.includes(userData._id) ||
+                        ((userData.role?.toLowerCase() === "администратор" ||
+                          userData.role?.toLowerCase() === "зам. в.о." ||
+                          userData.role?.toLowerCase() === "сотрудник в.о." ||
+                          userData.role?.toLowerCase() ===
+                            "руководитель с.о.") && (
+                          <div className={style.create_direction__organizers}>
+                            <button onClick={() => setShowPageIndex(3)}>
+                              Участники направления
+                            </button>
+                          </div>
+                        ))}
+                    </div>
+
+                    <form>
+                      <div>
+                        <p>Название студенческого объединения</p>
+                        <input
+                          type="text"
+                          value={name}
+                          onChange={(event) => setName(event.target.value)}
+                        />
                       </div>
-                    )}
 
-                    {directing?.admins?.includes(userData._id) ||
-                      ((userData.role?.toLowerCase() === "администратор" ||
-                        userData.role?.toLowerCase() === "зам. в.о." ||
-                        userData.role?.toLowerCase() === "сотрудник в.о." ||
-                        userData.role?.toLowerCase() ===
-                          "руководитель с.о.") && (
-                        <div className={style.create_direction__organizers}>
-                          <button onClick={() => setShowPageIndex(2)}>
-                            Входящие заявки студентов
-                          </button>
-                        </div>
-                      ))}
+                      <div>
+                        <p>Основное описание</p>
+                        <textarea
+                          value={description}
+                          onChange={(event) =>
+                            setDescription(event.target.value)
+                          }
+                        />
+                      </div>
 
-                    {directing?.admins?.includes(userData._id) ||
-                      ((userData.role?.toLowerCase() === "администратор" ||
-                        userData.role?.toLowerCase() === "зам. в.о." ||
-                        userData.role?.toLowerCase() === "сотрудник в.о." ||
-                        userData.role?.toLowerCase() ===
-                          "руководитель с.о.") && (
-                        <div className={style.create_direction__organizers}>
-                          <button onClick={() => setShowPageIndex(3)}>
-                            Участники направления
-                          </button>
-                        </div>
-                      ))}
-                  </div>
+                      <div>
+                        <p>Следующее описание</p>
+                        <textarea
+                          value={secondDescription}
+                          onChange={(event) =>
+                            setSecondDescription(event.target.value)
+                          }
+                        />
+                      </div>
+                    </form>
 
-                  <form>
-                    <div>
-                      <p>Название направления</p>
+                    <div className={style.create_direction__images}>
+                      <div className={style.create_direction__image}>
+                        <p>Главное изображение</p>
+
+                        <input id="main-image" {...getInputPropsMain()} />
+
+                        <label htmlFor="main-image">
+                          <div>
+                            {imagePath ? (
+                              <img
+                                src={`${process.env.REACT_APP_SERVER_URL}${imagePath}`}
+                                alt="main image"
+                              />
+                            ) : (
+                              <p>Перетащите файл сюда или нажмите для выбора</p>
+                            )}
+                          </div>
+                        </label>
+                      </div>
+
+                      <div className={style.create_direction__image}>
+                        <p>Второе изображение</p>
+
+                        <input id="second-image" {...getInputPropsSecond()} />
+
+                        <label htmlFor="second-image">
+                          <div>
+                            {secondImagePath ? (
+                              <img
+                                src={`${process.env.REACT_APP_SERVER_URL}${secondImagePath}`}
+                                alt="second image"
+                              />
+                            ) : (
+                              <p>Перетащите файл сюда или нажмите для выбора</p>
+                            )}
+                          </div>
+                        </label>
+                      </div>
+                    </div>
+
+                    <div className={style.create_direction__gallery}>
+                      <p>Галерея</p>
+                      <div className={style.create_direction__image}>
+                        <input id="gallery" {...getInputPropsGallery()} />
+                        <label htmlFor="gallery">
+                          <div>
+                            <p>Перетащите файлы сюда или нажмите для выбора</p>
+                          </div>
+                        </label>
+                      </div>
+                      <div className={style.gallery_preview}>
+                        {gallery.map((image, index) => (
+                          <div key={index} className={style.gallery_item}>
+                            <img
+                              src={`${process.env.REACT_APP_SERVER_URL}${image}`}
+                              alt={`Gallery ${index}`}
+                            />
+                            <button
+                              onClick={() => removeImageFromGallery(index)}
+                            >
+                              Удалить
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className={style.skills}>
+                      <h3>Навыки</h3>
+                      <ul>
+                        {skills.map((item, index) => (
+                          <li key={index}>
+                            <p>{item}</p>
+                            <button onClick={() => removeSkill(index)}>
+                              Удалить
+                            </button>
+                          </li>
+                        ))}
+                      </ul>
                       <input
                         type="text"
-                        value={name}
-                        onChange={(event) => setName(event.target.value)}
+                        value={newSkill}
+                        onChange={(event) => setNewSkill(event.target.value)}
+                        placeholder="Добавить новый навык"
                       />
-                    </div>
-
-                    <div>
-                      <p>Основное описание</p>
-                      <textarea
-                        value={description}
-                        onChange={(event) => setDescription(event.target.value)}
-                      />
-                    </div>
-
-                    <div>
-                      <p>Следующее описание</p>
-                      <textarea
-                        value={secondDescription}
-                        onChange={(event) =>
-                          setSecondDescription(event.target.value)
-                        }
-                      />
-                    </div>
-                  </form>
-
-                  <div className={style.create_direction__images}>
-                    <div className={style.create_direction__image}>
-                      <p>Главное изображение</p>
-
-                      <input id="main-image" {...getInputPropsMain()} />
-
-                      <label htmlFor="main-image">
-                        <div>
-                          {imagePath ? (
-                            <img
-                              src={`${process.env.REACT_APP_SERVER_URL}${imagePath}`}
-                              alt="main image"
-                            />
-                          ) : (
-                            <p>Перетащите файл сюда или нажмите для выбора</p>
-                          )}
-                        </div>
-                      </label>
-                    </div>
-
-                    <div className={style.create_direction__image}>
-                      <p>Второе изображение</p>
-
-                      <input id="second-image" {...getInputPropsSecond()} />
-
-                      <label htmlFor="second-image">
-                        <div>
-                          {secondImagePath ? (
-                            <img
-                              src={`${process.env.REACT_APP_SERVER_URL}${secondImagePath}`}
-                              alt="second image"
-                            />
-                          ) : (
-                            <p>Перетащите файл сюда или нажмите для выбора</p>
-                          )}
-                        </div>
-                      </label>
+                      <button onClick={addSkill}>Добавить навык</button>
                     </div>
                   </div>
 
-                  <div className={style.create_direction__gallery}>
-                    <p>Галерея</p>
-                    <div className={style.create_direction__image}>
-                      <input id="gallery" {...getInputPropsGallery()} />
-                      <label htmlFor="gallery">
-                        <div>
-                          <p>Перетащите файлы сюда или нажмите для выбора</p>
-                        </div>
-                      </label>
-                    </div>
-                    <div className={style.gallery_preview}>
-                      {gallery.map((image, index) => (
-                        <div key={index} className={style.gallery_item}>
-                          <img
-                            src={`${process.env.REACT_APP_SERVER_URL}${image}`}
-                            alt={`Gallery ${index}`}
-                          />
-                          <button onClick={() => removeImageFromGallery(index)}>
-                            Удалить
-                          </button>
-                        </div>
-                      ))}
-                    </div>
+                  <div className={style.admin_direction__buttons}>
+                    <button onClick={updateDirecting} disabled={saving}>
+                      {saving ? "Сохранение..." : "Обновить"}
+                    </button>
+
+                    <button onClick={deleteDirection}>
+                      Удалить студенческое объединение
+                    </button>
                   </div>
-
-                  <div className={style.skills}>
-                    <h3>Навыки</h3>
-                    <ul>
-                      {skills.map((item, index) => (
-                        <li key={index}>
-                          <p>{item}</p>
-                          <button onClick={() => removeSkill(index)}>
-                            Удалить
-                          </button>
-                        </li>
-                      ))}
-                    </ul>
-                    <input
-                      type="text"
-                      value={newSkill}
-                      onChange={(event) => setNewSkill(event.target.value)}
-                      placeholder="Добавить новый навык"
-                    />
-                    <button onClick={addSkill}>Добавить навык</button>
-                  </div>
-
-                  {directing?.admins?.includes(userData._id) &&
-                    (userData.role?.toLowerCase() === "администратор" ||
-                      userData.role?.toLowerCase() === "сотрудник в.о." ||
-                      userData.role?.toLowerCase() === "руководитель с.о.") && (
-                      <Link
-                        to={`${process.env.REACT_APP_SERVER_URL}/excel-direction/${id}`}
-                        target="_blank"
-                      >
-                        Скачать Excel
-                      </Link>
-                    )}
-
-                  <button onClick={updateDirecting} disabled={saving}>
-                    {saving ? "Сохранение..." : "Обновить"}
-                  </button>
-
-                  <button onClick={deleteDirection}>Удалить мероприятие</button>
-                </React.Fragment>
+                </div>
               )
             )}
           </div>
@@ -502,12 +551,20 @@ const AdminDirecting = ({ userData }) => {
               </button>
 
               <h2>Добавить руководителей</h2>
+
+              <input
+                type="text"
+                placeholder="Поиск..."
+                value={searchOrganizerTerm}
+                onChange={(e) => setSearchOrganizerTerm(e.target.value)}
+              />
+
               {loadingOrganizers ? (
                 <p>Загрузка руководителей...</p>
               ) : (
-                organizers && (
+                filteredOrganizers && (
                   <ul>
-                    {organizers.map(({ fullName, role, _id }) => (
+                    {filteredOrganizers.map(({ fullName, role, _id }) => (
                       <li key={_id}>
                         <div>
                           <Link to={`/user/${_id}`}>
@@ -547,39 +604,48 @@ const AdminDirecting = ({ userData }) => {
 
               <h2>Входящие заявки студентов</h2>
 
+              <input
+                type="text"
+                placeholder="Поиск..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+
               {loadingStudens ? (
                 <p>Загрузка студентов...</p>
               ) : (
-                Array.isArray(applications) && (
+                Array.isArray(filteredApplications) && (
                   <ul>
-                    {applications.map(({ fullName, role, _id, group }) => (
-                      <li key={_id}>
-                        <div>
-                          <Link to={`/user/${_id}`}>
-                            <p>{role}</p>
-                            <p>
-                              {fullName}. Группа: {group}
-                            </p>
-                          </Link>
-                        </div>
+                    {filteredApplications.map(
+                      ({ fullName, role, _id, group }) => (
+                        <li key={_id}>
+                          <div>
+                            <Link to={`/user/${_id}`}>
+                              <p>{role}</p>
+                              <p>
+                                {fullName}. Группа: {group}
+                              </p>
+                            </Link>
+                          </div>
 
-                        {members.includes(_id) ? (
-                          <button
-                            onClick={() => removeMember(_id)}
-                            style={{ backgroundColor: "red" }}
-                          >
-                            Удалить
-                          </button>
-                        ) : (
-                          <button
-                            onClick={() => addMember(_id)}
-                            style={{ backgroundColor: "#009dff" }}
-                          >
-                            Добавить
-                          </button>
-                        )}
-                      </li>
-                    ))}
+                          {members.includes(_id) ? (
+                            <button
+                              onClick={() => removeMember(_id)}
+                              style={{ backgroundColor: "red" }}
+                            >
+                              Удалить
+                            </button>
+                          ) : (
+                            <button
+                              onClick={() => addMember(_id)}
+                              style={{ backgroundColor: "#009dff" }}
+                            >
+                              Добавить
+                            </button>
+                          )}
+                        </li>
+                      )
+                    )}
                   </ul>
                 )
               )}
@@ -592,14 +658,21 @@ const AdminDirecting = ({ userData }) => {
                 Вернуться назад
               </button>
 
-              <h2>Участники направления</h2>
+              <h2>Участники студенческого объединения</h2>
+
+              <input
+                type="text"
+                placeholder="Поиск..."
+                value={searchMemberTerm}
+                onChange={(e) => setSearchMemberTerm(e.target.value)}
+              />
 
               {loadingMembers ? (
                 <p>Загрузка участников...</p>
               ) : (
-                Array.isArray(membersFull) && (
+                Array.isArray(filteredMembers) && (
                   <ul>
-                    {membersFull.map(({ fullName, role, _id, group }) => (
+                    {filteredMembers.map(({ fullName, role, _id, group }) => (
                       <li key={_id}>
                         <div>
                           <Link to={`/user/${_id}`}>

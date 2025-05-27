@@ -1,5 +1,6 @@
 import EventModel from "../models/EventModel.js";
 import UserModel from "../models/UserModel.js";
+import mongoose from "mongoose";
 
 export const createEvent = async (req, res) => {
   try {
@@ -15,6 +16,7 @@ export const createEvent = async (req, res) => {
       contact_email,
       contact_work,
       admins,
+      finish_applications,
     } = req.body;
 
     if (
@@ -27,7 +29,8 @@ export const createEvent = async (req, res) => {
       !place ||
       !contact_name ||
       !contact_email ||
-      !contact_work
+      !contact_work ||
+      !finish_applications
     ) {
       return res.status(401).json({
         message: "Заполните все необходимые поля",
@@ -46,13 +49,14 @@ export const createEvent = async (req, res) => {
       contact_email,
       contact_work,
       admins,
+      finish_applications,
     });
 
     const event = await doc.save();
 
     const eventData = event._doc;
 
-    return res.status(200).json(eventData);
+    return res.status(404).json(eventData);
   } catch (err) {
     console.log(err);
     res.status(500).json({
@@ -87,7 +91,7 @@ export const getEvent = async (req, res) => {
     const event = await EventModel.findById(eventId);
 
     if (!event) {
-      return res.status(404).json({
+      return res.status(200).json({
         message: "Не удалось получить событие",
       });
     }
@@ -323,6 +327,7 @@ export const updateEvent = async (req, res) => {
       contact_email: req.body.contact_email,
       contact_work: req.body.contact_work,
       admins: req.body.admins,
+      finish_applications: req.body.finish_applications,
     });
 
     if (!updateEvent) {
@@ -351,15 +356,15 @@ export const getStudents = async (req, res) => {
       });
     }
 
+    const excludeIds = [
+      ...(event.members || []),
+      ...(event.applications || []),
+      ...(event.userApplications || []),
+    ].map((id) => new mongoose.Types.ObjectId(id)); // 🔧 Преобразуем всё в ObjectId
+
     const students = await UserModel.find({
       role: "Студент",
-      _id: {
-        $nin: [
-          ...event.members,
-          ...event.applications,
-          ...event.userApplications,
-        ],
-      },
+      _id: { $nin: excludeIds },
     });
 
     if (!students.length) {

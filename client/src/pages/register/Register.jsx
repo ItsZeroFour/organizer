@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import style from "./style.module.scss";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "../../utils/axios";
+import NotificationNoReload from "../../components/notification/NotificationNoReload";
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -9,6 +10,7 @@ const Register = () => {
     password: "",
     fullName: "",
   });
+  const [showNotification, setShowNotification] = useState(false);
 
   const navigate = useNavigate();
 
@@ -23,7 +25,7 @@ const Register = () => {
     const { email, password, fullName } = formData;
 
     if (!email || !password || !fullName) {
-      alert("Пожалуйста, заполните все поля");
+      setShowNotification(true);
       return;
     }
 
@@ -34,20 +36,23 @@ const Register = () => {
       );
       if (res.status === 200) {
         localStorage.setItem("token", res.data.token);
-        // alert("Вы успешно зарегистировались!");
         navigate("/");
         window.location.reload();
       }
     } catch (error) {
-      alert(
-        `Произошла ошибка: ${error.response?.data?.message || error.message}`
-      );
       console.error(error);
     }
   };
 
   return (
     <section className={style.register}>
+      {showNotification && (
+        <NotificationNoReload
+          title={"Ошибка!"}
+          text={"Пожалуйста, заполните все поля!"}
+        />
+      )}
+
       <div className="container">
         <div className={style.register__wrapper}>
           <div className={style.register__content}>
