@@ -525,6 +525,7 @@ export const cancelApplication = async (req, res) => {
         $pull: {
           userApplications: userId,
           applications: userId,
+          members: userId,
         },
       },
       { new: true } // Возвращаем обновленный документ

@@ -196,7 +196,7 @@ const Event = ({ userData }) => {
                         </ul>
 
                         {userData && userData.role === "Студент" && (
-                          <React.Fragment>
+                          <div className={style.event__buttons}>
                             <button
                               onClick={handleJoinEvent}
                               style={isEnd ? { opacity: 0.8 } : { opacity: 1 }}
@@ -216,15 +216,17 @@ const Event = ({ userData }) => {
                             </button>
 
                             {(event.userApplications.includes(userData._id) ||
-                              event.applications.includes(userData._id)) && (
-                              <button
-                                onClick={concelApplication}
-                                style={{ background: "red" }}
-                              >
-                                Отменить заявку
-                              </button>
-                            )}
-                          </React.Fragment>
+                              event.members.includes(userData._id) ||
+                              event.applications.includes(userData._id)) &&
+                              !isEnd && (
+                                <button
+                                  className={style.event__buttons__red}
+                                  onClick={concelApplication}
+                                >
+                                  Отменить заявку
+                                </button>
+                              )}
+                          </div>
                         )}
 
                         {userData &&
