@@ -94,20 +94,33 @@ app.get("/excel-direction/:id", async (req, res) => {
   }
 });
 
-app.get("/excel-event/:id", async (req, res) => {
+app.post("/excel-event/:id", async (req, res) => {
   try {
-    const filePath = await createExcelEvent(req.params.id);
+    const { date, title, person, desc } = req.body;
+    const filePath = await createExcelEvent(req.params.id, {
+      date,
+      title,
+      person,
+      desc,
+    });
 
-    res.download(filePath, "table.xlsx", (err) => {
+    // Отправить файл как attachment
+    res.setHeader("Content-Disposition", "attachment; filename=table.xlsx");
+    res.setHeader(
+      "Content-Type",
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    );
+
+    res.sendFile(filePath, { root: "." }, (err) => {
       if (err) {
         console.error("Ошибка при отправке файла:", err);
         res.status(500).send("Ошибка при скачивании файла");
       }
     });
   } catch (error) {
-    console.log(error);
+    console.error("Ошибка при создании Excel файла:", error);
     res.status(500).json({
-      message: "Ошибка скачивании файла",
+      message: "Ошибка создания Excel файла",
     });
   }
 });

@@ -162,7 +162,7 @@ const Events = ({ userData }) => {
                       userData?.role?.toLowerCase() === "зам. в.о." ||
                       userData?.role?.toLowerCase() === "руководитель в.о." ||
                       userData?.role?.toLowerCase() === "администратор") && (
-                      <Link to="/create-event">Создание мероприятия</Link>
+                      <Link to="/create-event">Назначение мероприятия</Link>
                     )}
                   </div>
 

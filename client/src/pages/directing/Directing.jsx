@@ -152,7 +152,7 @@ const Directing = ({ userData }) => {
                           <Link to={`/admin-directing/${id}`}>Управлять</Link>
                         )}
 
-                      {(userData?.role?.toLowerCase() === "зам. в.о." ||
+                      {/* {(userData?.role?.toLowerCase() === "зам. в.о." ||
                         userData?.role?.toLowerCase() === "администратор") && (
                         <Link
                           className={style.directing__head__excel}
@@ -161,7 +161,7 @@ const Directing = ({ userData }) => {
                         >
                           Скачать Excel
                         </Link>
-                      )}
+                      )} */}
                     </div>
                   </div>
                 </div>

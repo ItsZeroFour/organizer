@@ -31,15 +31,20 @@ export async function createExcelDirection(direction_id) {
   }
 }
 
-export async function createExcelEvent(event_id) {
+export async function createExcelEvent(event_id, meta = {}) {
   try {
     const event = await EventModel.findById(event_id)
       .populate("members")
       .exec();
 
+    const { date, title, person, desc } = meta;
 
     const data = [
-      [event.name, `${event.start} - ${event.finish}`],
+      ["Дата:", date || ""],
+      ["Название:", title || event.name],
+      ["Сотрудник:", person || ""],
+      ["Описание:", desc || ""],
+      [],
       ["ФИО", "Телефон", "Группа", "E-mail"],
     ];
 
@@ -53,11 +58,9 @@ export async function createExcelEvent(event_id) {
 
     const uniqueSuffix = crypto.randomUUID();
     const filePath = `./download/${uniqueSuffix}.xlsx`;
-
-    // Использовать синхронную функцию записи файла
     XLSX.writeFile(workbook, filePath);
 
-    return Promise.resolve(filePath);
+    return filePath;
   } catch (error) {
     console.error("Ошибка при создании Excel файла:", error);
     throw new Error("Не удалось создать Excel файл");

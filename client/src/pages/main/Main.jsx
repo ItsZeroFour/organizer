@@ -61,7 +61,9 @@ const Main = ({ userData }) => {
                 {(userData?.role.toLowerCase() === "руководитель в.о." ||
                   userData?.role.toLowerCase() === "зам. в.о." ||
                   userData?.role.toLowerCase() === "администратор") && (
-                  <Link to="/create-directing">Создание направления</Link>
+                  <Link to="/create-directing">
+                    Создание студенческого объединения
+                  </Link>
                 )}
               </div>
 

@@ -76,6 +76,12 @@ const Register = () => {
                 onChange={handleChange}
                 placeholder="Пароль"
               />
+
+              <div className={style.register__box}>
+                <input id="pass" type="checkbox" />
+                <label htmlFor="pass">Запомнить пароль</label>
+              </div>
+
               <button type="submit">Зарегистрироваться</button>
             </form>
           </div>

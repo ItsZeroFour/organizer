@@ -63,11 +63,17 @@ const SignIn = () => {
                 onChange={handleChange}
                 placeholder="Пароль"
               />
+              <div className={style.register__box}>
+                <input id="pass" type="checkbox" />
+                <label htmlFor="pass">Запомнить пароль</label>
+              </div>
+
               <button type="submit">Войти</button>
             </form>
           </div>
 
           <div className={style.signin__links}>
+            <Link to="/register">Забыли свой пароль?</Link>
             <Link to="/register">Нет аккаунта в системе?</Link>
             {/* <Link to="/forgot-password">Забыли пароль?</Link> */}
           </div>
