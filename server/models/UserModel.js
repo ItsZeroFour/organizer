@@ -42,6 +42,12 @@ const userSchema = new mongoose.Schema({
     enum: ["Студент", "Сотрудник в.о.", "Зам. в.о.", "Администратор"],
   },
 
+  post: {
+    type: "String",
+    required: true,
+    default: "",
+  },
+
   directing: [
     {
       type: mongoose.Schema.Types.ObjectId,

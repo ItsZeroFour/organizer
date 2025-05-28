@@ -15,6 +15,7 @@ import NotificationNoReload from "../../components/notification/NotificationNoRe
 const Account = ({ userData }) => {
   const [group, setGroup] = useState(userData.group || "Не указано");
   const [phone, setPhone] = useState(userData.phone || "Не указано");
+  const [post, setPost] = useState(userData.post || "Должность не указана");
   const [birthdate, setBirthdate] = useState(
     userData.birthdate || "Не указано"
   );
@@ -31,6 +32,7 @@ const Account = ({ userData }) => {
           group,
           phone,
           birthdate,
+          post,
         }
       );
 
@@ -153,6 +155,18 @@ const Account = ({ userData }) => {
                         onChange={(e) => setBirthdate(e.target.value)}
                       />
                     </div>
+
+                    {userData.role.toLowerCase() === "сотрудник в.о." && (
+                      <div>
+                        <p>Должность</p>
+                        <input
+                          type="text"
+                          placeholder="Должность"
+                          value={post}
+                          onChange={(e) => setPost(e.target.value)}
+                        />
+                      </div>
+                    )}
 
                     <button onClick={handleSave}>Сохранить</button>
                   </div>

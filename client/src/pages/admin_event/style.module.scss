@@ -223,6 +223,7 @@
     margin-top: 30px;
 
     div {
+      width: 100%;
       label {
         font-size: 14px;
       }
@@ -230,6 +231,7 @@
       input,
       textarea {
         border-radius: 15px;
+        width: 100%;
       }
 
       display: flex;

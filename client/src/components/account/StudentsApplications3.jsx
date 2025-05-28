@@ -33,12 +33,6 @@ const StudentsApplications = ({ userData }) => {
 
   const concelApplication = async (_id) => {
     try {
-      const isConfirm = window.confirm(
-        "Вы уверены что хотите отменить заявку?"
-      );
-
-      if (!isConfirm) return;
-
       const response = await axios.patch(
         `/directing/cancel-application/${_id}`
       );
@@ -56,7 +50,6 @@ const StudentsApplications = ({ userData }) => {
       {showNotificationDecline && (
         <Notification title={"Успешно!"} text={"Вы отменили заявку!"} />
       )}
-
       <div
         className={`${style.admins_directing__wrapper} ${style.admins_directing__wrapper_2}`}
       >

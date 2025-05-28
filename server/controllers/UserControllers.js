@@ -73,7 +73,8 @@ export const updateUser = async (req, res) => {
       });
     }
 
-    const { fullName, email, password, group, phone, birthdate } = req.body;
+    const { fullName, email, password, group, phone, birthdate, post } =
+      req.body;
 
     const updatedData = {
       fullName: fullName || user.fullName,
@@ -82,6 +83,7 @@ export const updateUser = async (req, res) => {
       group: group || user.group,
       phone: phone || user.phone,
       birthdate: birthdate || user.birthdate,
+      post: post || user.post,
     };
 
     await UserModel.findByIdAndUpdate(req.userId, updatedData);

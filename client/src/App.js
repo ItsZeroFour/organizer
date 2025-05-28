@@ -95,7 +95,10 @@ function App() {
                         element={<CreateEvent userData={userData} />}
                       />
 
-                      <Route path="/admin-event/:id" element={<AdminEvent />} />
+                      <Route
+                        path="/admin-event/:id"
+                        element={<AdminEvent userData={userData} />}
+                      />
                     </React.Fragment>
                   )}
                 </>

@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom";
 import InputMask from "react-input-mask";
 import Notification from "../../components/notification/Notification";
 
-const AdminEvent = () => {
+const AdminEvent = ({ userData }) => {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [startDate, setStartDate] = useState("");
@@ -92,6 +92,8 @@ const AdminEvent = () => {
         const response = await axios.get(
           `${process.env.REACT_APP_SERVER_URL}/event/get/${id}`
         );
+
+        console.log(response);
 
         if (response.status === 200) {
           setName(response.data.name);
@@ -285,6 +287,8 @@ const AdminEvent = () => {
           `${process.env.REACT_APP_SERVER_URL}/event/get-admins/${id}`
         );
 
+        console.log(response);
+
         if (response.status === 200) {
           setAdmins(response.data);
           setLoadingAdmins(false);
@@ -336,7 +340,7 @@ const AdminEvent = () => {
         title: name,
         date: startDate,
         place: place,
-        person: organizers.map(({ fullName }) => fullName).join(", "),
+        person: admins.map(({ fullName }) => fullName).join(", "),
         listCount: String(members.length),
       };
 
@@ -503,31 +507,59 @@ const AdminEvent = () => {
               <h3>Создание отчета для мероприятия</h3>
 
               <form>
-                {/* <div>
+                <div>
                   <label htmlFor="date">Дата:</label>
                   <input
+                    style={{ opacity: 0.7 }}
                     id="date"
                     name="date"
-                    type="date"
-                    value={formData.date}
-                    onChange={handleChange}
+                    type="text"
+                    value={startDate}
                     required
+                    disabled
                   />
-                </div> */}
+                </div>
 
-                {/* <div>
+                <div>
+                  <label htmlFor="person">Название мероприятия:</label>
+                  <input
+                    style={{ opacity: 0.7 }}
+                    id="person"
+                    name="person"
+                    type="text"
+                    value={name}
+                    required
+                    disabled
+                  />
+                </div>
+
+                <div>
                   <label htmlFor="person">
                     Сотрудник воспитательного отдела:
                   </label>
                   <input
+                    style={{ opacity: 0.7 }}
                     id="person"
                     name="person"
                     type="text"
-                    value={formData.person}
-                    onChange={handleChange}
+                    value={admins.map(({ fullName }) => fullName).join(", ")}
                     required
+                    disabled
                   />
-                </div> */}
+                </div>
+
+                <div>
+                  <label htmlFor="person">Место проведения:</label>
+                  <input
+                    style={{ opacity: 0.7 }}
+                    id="person"
+                    name="person"
+                    type="text"
+                    value={place}
+                    required
+                    disabled
+                  />
+                </div>
 
                 <div>
                   <label htmlFor="desc">Описание мероприятия:</label>
@@ -774,7 +806,14 @@ const AdminEvent = () => {
                       </button>
 
                       <button onClick={updateEvent}>Обновить</button>
-                      <button onClick={deleteEvent}>Удалить мероприятие</button>
+
+                      {userData &&
+                        (userData?.role.toLowerCase() === "администратор" ||
+                          userData?.role.toLowerCase() === "зам. в.о.") && (
+                          <button onClick={deleteEvent}>
+                            Удалить мероприятие
+                          </button>
+                        )}
                     </div>
                   </div>
                 )}
@@ -1062,10 +1101,10 @@ const AdminEvent = () => {
                   ) : (
                     filteredOrganizers && (
                       <ul>
-                        {filteredOrganizers.map(({ fullName, role, _id }) => (
+                        {filteredOrganizers.map(({ fullName, post, _id }) => (
                           <li key={_id}>
                             <div>
-                              <p>{role}</p>
+                              <p>{post}</p>
                               <p>{fullName}</p>
                             </div>
 

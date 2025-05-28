@@ -573,9 +573,13 @@ const AdminDirecting = ({ userData }) => {
                       Скачать список участников
                     </button>
 
-                    <button onClick={deleteDirection}>
-                      Удалить студенческое объединение
-                    </button>
+                    {userData &&
+                      (userData?.role.toLowerCase() === "администратор" ||
+                        userData?.role.toLowerCase() === "зам. в.о.") && (
+                        <button onClick={deleteDirection}>
+                          Удалить студенческое объединение
+                        </button>
+                      )}
                   </div>
                 </div>
               )
@@ -602,11 +606,11 @@ const AdminDirecting = ({ userData }) => {
               ) : (
                 filteredOrganizers && (
                   <ul>
-                    {filteredOrganizers.map(({ fullName, role, _id }) => (
+                    {filteredOrganizers.map(({ fullName, post, _id }) => (
                       <li key={_id}>
                         <div>
                           <Link to={`/user/${_id}`}>
-                            <p>{role}</p>
+                            <p>{post}</p>
                             <p>{fullName}</p>
                           </Link>
                         </div>

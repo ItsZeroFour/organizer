@@ -178,7 +178,9 @@ export const getEventAdmins = async (req, res) => {
   try {
     const eventId = req.params.id;
 
-    const getAdmins = await EventModel.findById(eventId);
+    const getAdmins = await EventModel.findById(eventId)
+      .populate("admins")
+      .exec();
 
     if (!getAdmins) {
       return res.status(500).json({
