@@ -535,7 +535,7 @@ const AdminEvent = ({ userData }) => {
 
                 <div>
                   <label htmlFor="person">
-                    Сотрудник воспитательного отдела:
+                    Ответсвенные за проведение мероприятия:
                   </label>
                   <input
                     style={{ opacity: 0.7 }}
@@ -586,6 +586,7 @@ const AdminEvent = ({ userData }) => {
               </form>
 
               <p>Список учатсников:</p>
+              <p>Колличество: {membersFull?.length}</p>
 
               {loadingMembers ? (
                 <p>Загрузка...</p>
