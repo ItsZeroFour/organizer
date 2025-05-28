@@ -6,6 +6,7 @@ import { useDropzone } from "react-dropzone";
 import { useNavigate } from "react-router-dom";
 import InputMask from "react-input-mask";
 import Notification from "../../components/notification/Notification";
+import NotificationNoReload from "../../components/notification/NotificationNoReload";
 
 const AdminEvent = ({ userData }) => {
   const [name, setName] = useState("");
@@ -49,6 +50,8 @@ const AdminEvent = ({ userData }) => {
 
   const [showPageIndex, setShowPageIndex] = useState(0);
   const [showExcelDownloadPage, setShowExcelDownloadPage] = useState(false);
+  const [showNotificationOrganizers, setShowNotificationOrganizers] =
+    useState(false);
 
   const [formData, setFormData] = useState({
     date: "",
@@ -79,6 +82,7 @@ const AdminEvent = ({ userData }) => {
 
   const [showNotificationDelete, setShowNotificationDelete] = useState(false);
   const [showNotificationUpdate, setShowNotificationUpdate] = useState(false);
+  const [adminsArr, setAdminsArr] = useState([]);
 
   const { id } = useParams();
 
@@ -108,6 +112,7 @@ const AdminEvent = ({ userData }) => {
           setContact_name(response.data.contact_name);
           setContact_email(response.data.contact_email);
           setContact_work(response.data.contact_work);
+          setAdminsArr(response.data.admins);
 
           setApplicationDateFinish(response.data.finish_applications);
 
@@ -133,6 +138,10 @@ const AdminEvent = ({ userData }) => {
 
   const updateEvent = async () => {
     try {
+      if (adminsArr.length === 0) {
+        return setShowNotificationOrganizers(true);
+      }
+
       const directing = await axios.patch(
         `${process.env.REACT_APP_SERVER_URL}/event/update/${id}`,
         {
@@ -145,7 +154,7 @@ const AdminEvent = ({ userData }) => {
           applications: applications,
           members: members,
           userApplications: userApplications,
-          admins: admins,
+          admins: adminsArr,
         }
       );
 
@@ -477,11 +486,13 @@ const AdminEvent = ({ userData }) => {
   };
 
   const addAdmin = (id) => {
-    setAdmins((prevAdmins) => [...prevAdmins, id]);
+    setAdminsArr((prevAdmins) => [...prevAdmins, id]);
   };
 
   const removeAdmin = (id) => {
-    setAdmins((prevAdmins) => prevAdmins.filter((adminId) => adminId !== id));
+    setAdminsArr((prevAdmins) =>
+      prevAdmins.filter((adminId) => adminId !== id)
+    );
   };
 
   return (
@@ -497,6 +508,14 @@ const AdminEvent = ({ userData }) => {
         <Notification
           title={"Успешно!"}
           text={"Мероприятие успешно обновлено!"}
+        />
+      )}
+
+      {showNotificationOrganizers && (
+        <NotificationNoReload
+          title={"Ошибка!"}
+          text={"Должен быть хотя бы 1 ответственный"}
+          open={setShowNotificationOrganizers}
         />
       )}
 
@@ -1109,7 +1128,7 @@ const AdminEvent = ({ userData }) => {
                               <p>{fullName}</p>
                             </div>
 
-                            {admins.includes(_id) ? (
+                            {adminsArr.includes(_id) ? (
                               <button
                                 onClick={() => removeAdmin(_id)}
                                 style={{ backgroundColor: "red" }}

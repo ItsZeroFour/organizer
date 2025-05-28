@@ -87,7 +87,7 @@ const CreateEvent = ({ userData }) => {
   const createEvent = async () => {
     try {
       if (admins.length === 0) {
-        setShowNotificationOrganizers(true);
+        return setShowNotificationOrganizers(true);
       }
 
       const fetch = await axios.post(

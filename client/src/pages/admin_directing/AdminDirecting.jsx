@@ -44,6 +44,9 @@ const AdminDirecting = ({ userData }) => {
   const [showNotificationRemoveUser, setShowNotificationRemoveUser] =
     useState(false);
 
+  const [showNotificationOrganizers, setShowNotificationOrganizers] =
+    useState(false);
+
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
 
@@ -195,7 +198,12 @@ const AdminDirecting = ({ userData }) => {
 
   const updateDirecting = async () => {
     try {
+      if (admins.length === 0) {
+        return setShowNotificationOrganizers(true);
+      }
+
       setSaving(true);
+
       const data = await axios.patch(
         `${process.env.REACT_APP_SERVER_URL}/directing/update/${directing._id}`,
         {
@@ -378,6 +386,14 @@ const AdminDirecting = ({ userData }) => {
         <Notification
           title={"Успешно!"}
           text={"Студенческое объединение удалено успешно!"}
+        />
+      )}
+
+      {showNotificationOrganizers && (
+        <NotificationNoReload
+          title={"Ошибка!"}
+          text={"Должен быть хотя бы 1 ответственный"}
+          open={setShowNotificationOrganizers}
         />
       )}
 
