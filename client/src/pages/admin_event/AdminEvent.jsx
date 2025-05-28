@@ -97,8 +97,6 @@ const AdminEvent = ({ userData }) => {
           `${process.env.REACT_APP_SERVER_URL}/event/get/${id}`
         );
 
-        console.log(response);
-
         if (response.status === 200) {
           setName(response.data.name);
           setMembers(response.data.members);
@@ -707,7 +705,9 @@ const AdminEvent = ({ userData }) => {
                         />
                         <input
                           type="text"
-                          onChange={(event) => setDirectingItem(event.target.value)}
+                          onChange={(event) =>
+                            setDirectingItem(event.target.value)
+                          }
                           value={directingItem}
                           placeholder="Направление (например, патриотическое)"
                         />
@@ -832,13 +832,7 @@ const AdminEvent = ({ userData }) => {
 
                       <button onClick={updateEvent}>Обновить</button>
 
-                      {userData &&
-                        (userData?.role.toLowerCase() === "администратор" ||
-                          userData?.role.toLowerCase() === "зам. в.о.") && (
-                          <button onClick={deleteEvent}>
-                            Удалить мероприятие
-                          </button>
-                        )}
+                      <button onClick={deleteEvent}>Удалить мероприятие</button>
                     </div>
                   </div>
                 )}
