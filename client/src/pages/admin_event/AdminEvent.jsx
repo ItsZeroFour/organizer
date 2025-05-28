@@ -57,6 +57,7 @@ const AdminEvent = () => {
     person: "",
     desc: "",
     count: "",
+    listCount: "",
   });
 
   const [isLoading, setIsLoading] = useState(false);
@@ -336,6 +337,7 @@ const AdminEvent = () => {
         date: startDate,
         place: place,
         person: organizers.map(({ fullName }) => fullName).join(", "),
+        listCount: String(members.length),
       };
 
       const response = await axios.post(

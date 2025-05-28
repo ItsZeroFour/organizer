@@ -415,31 +415,17 @@ const AdminDirecting = ({ userData }) => {
                         </div>
                       )}
 
-                      {directing?.admins?.includes(userData._id) ||
-                        ((userData.role?.toLowerCase() === "администратор" ||
-                          userData.role?.toLowerCase() === "зам. в.о." ||
-                          userData.role?.toLowerCase() === "сотрудник в.о." ||
-                          userData.role?.toLowerCase() ===
-                            "руководитель с.о.") && (
-                          <div className={style.create_direction__organizers}>
-                            <button onClick={() => setShowPageIndex(2)}>
-                              Входящие заявки студентов
-                            </button>
-                          </div>
-                        ))}
+                      <div className={style.create_direction__organizers}>
+                        <button onClick={() => setShowPageIndex(2)}>
+                          Входящие заявки студентов
+                        </button>
+                      </div>
 
-                      {directing?.admins?.includes(userData._id) ||
-                        ((userData.role?.toLowerCase() === "администратор" ||
-                          userData.role?.toLowerCase() === "зам. в.о." ||
-                          userData.role?.toLowerCase() === "сотрудник в.о." ||
-                          userData.role?.toLowerCase() ===
-                            "руководитель с.о.") && (
-                          <div className={style.create_direction__organizers}>
-                            <button onClick={() => setShowPageIndex(3)}>
-                              Участники направления
-                            </button>
-                          </div>
-                        ))}
+                      <div className={style.create_direction__organizers}>
+                        <button onClick={() => setShowPageIndex(3)}>
+                          Участники направления
+                        </button>
+                      </div>
                     </div>
 
                     <form>

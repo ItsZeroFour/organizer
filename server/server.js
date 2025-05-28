@@ -97,7 +97,7 @@ app.get("/excel-direction/:id", async (req, res) => {
 
 app.post("/excel-event/:id", async (req, res) => {
   try {
-    const { date, title, person, desc, count, place } = req.body;
+    const { date, title, person, desc, count, place, listCount } = req.body;
     const filePath = await createExcelEvent(req.params.id, {
       date,
       title,
@@ -105,6 +105,7 @@ app.post("/excel-event/:id", async (req, res) => {
       desc,
       count,
       place,
+      listCount,
     });
 
     // Отправить файл как attachment

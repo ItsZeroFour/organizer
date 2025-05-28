@@ -37,13 +37,14 @@ export async function createExcelEvent(event_id, meta = {}) {
       .populate("members")
       .exec();
 
-    const { date, title, person, desc, count, place } = meta;
+    const { date, title, person, desc, count, place, listCount } = meta;
 
     const data = [
       ["Дата:", date || ""],
       ["Название:", title || event.name],
       ["Сотрудник:", person || ""],
       ["Описание:", desc || ""],
+      ["По списку:", listCount || ""],
       ["Присутствовало:", count || ""],
       ["Место проведения:", place || ""],
       [],
@@ -108,6 +109,8 @@ export async function createExcelDirectionMembersOnly(direction_id) {
       "Ошибка при создании Excel списка участников направления:",
       error
     );
-    throw new Error("Не удалось создать Excel файл участников Студенческого объединения");
+    throw new Error(
+      "Не удалось создать Excel файл участников Студенческого объединения"
+    );
   }
 }
