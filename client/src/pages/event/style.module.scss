@@ -130,7 +130,8 @@
   gap: 20px;
 
   button {
-    padding: 15px 31px !important;
+    padding: 10px 25px !important;
+    font-size: 14px;
 
     &.event__buttons__red {
       background: none !important;
@@ -138,7 +139,7 @@
       font-family: "Montserrat-md", sans-serif;
       font-weight: 500;
       color: var(--color-red);
-      padding: 13px 31px !important;
+      padding: 8px 25px !important;
     }
   }
 }

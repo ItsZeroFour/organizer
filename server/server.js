@@ -14,6 +14,7 @@ import { fileURLToPath } from "url";
 import multer from "multer";
 import {
   createExcelDirection,
+  createExcelDirectionMembersOnly,
   createExcelEvent,
 } from "./controllers/ExcelGeneration.js";
 
@@ -96,12 +97,14 @@ app.get("/excel-direction/:id", async (req, res) => {
 
 app.post("/excel-event/:id", async (req, res) => {
   try {
-    const { date, title, person, desc } = req.body;
+    const { date, title, person, desc, count, place } = req.body;
     const filePath = await createExcelEvent(req.params.id, {
       date,
       title,
       person,
       desc,
+      count,
+      place,
     });
 
     // Отправить файл как attachment
@@ -121,6 +124,24 @@ app.post("/excel-event/:id", async (req, res) => {
     console.error("Ошибка при создании Excel файла:", error);
     res.status(500).json({
       message: "Ошибка создания Excel файла",
+    });
+  }
+});
+
+app.get("/excel-direction-members/:id", async (req, res) => {
+  try {
+    const filePath = await createExcelDirectionMembersOnly(req.params.id);
+
+    res.download(filePath, "participants.xlsx", (err) => {
+      if (err) {
+        console.error("Ошибка при отправке файла:", err);
+        res.status(500).send("Ошибка при скачивании файла");
+      }
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      message: "Ошибка скачивания файла",
     });
   }
 });

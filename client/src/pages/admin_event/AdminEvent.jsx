@@ -53,9 +53,10 @@ const AdminEvent = () => {
   const [formData, setFormData] = useState({
     date: "",
     title: "",
+    place: "",
     person: "",
     desc: "",
-    count: 0,
+    count: "",
   });
 
   const [isLoading, setIsLoading] = useState(false);
@@ -315,9 +316,11 @@ const AdminEvent = () => {
   };
 
   const handleChange = (e) => {
+    const { name, value } = e.target;
+
     setFormData((prev) => ({
       ...prev,
-      [e.target.name]: e.target.value,
+      [name]: value, // ВСЕГДА сохраняем строку, даже если это input type="number"
     }));
   };
 
@@ -327,9 +330,21 @@ const AdminEvent = () => {
     setError(null);
 
     try {
-      const response = await axios.post(`/excel-event/${id}`, formData, {
-        responseType: "blob",
-      });
+      const formDataWithTitle = {
+        ...formData,
+        title: name,
+        date: startDate,
+        place: place,
+        person: organizers.map(({ fullName }) => fullName).join(", "),
+      };
+
+      const response = await axios.post(
+        `/excel-event/${id}`,
+        formDataWithTitle,
+        {
+          responseType: "blob",
+        }
+      );
 
       const blob = new Blob([response.data], {
         type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
@@ -486,7 +501,7 @@ const AdminEvent = () => {
               <h3>Создание отчета для мероприятия</h3>
 
               <form>
-                <div>
+                {/* <div>
                   <label htmlFor="date">Дата:</label>
                   <input
                     id="date"
@@ -496,21 +511,9 @@ const AdminEvent = () => {
                     onChange={handleChange}
                     required
                   />
-                </div>
+                </div> */}
 
-                <div>
-                  <label htmlFor="title">Название мероприятия:</label>
-                  <input
-                    id="title"
-                    name="title"
-                    type="text"
-                    value={formData.title}
-                    onChange={handleChange}
-                    required
-                  />
-                </div>
-
-                <div>
+                {/* <div>
                   <label htmlFor="person">
                     Сотрудник воспитательного отдела:
                   </label>
@@ -522,7 +525,7 @@ const AdminEvent = () => {
                     onChange={handleChange}
                     required
                   />
-                </div>
+                </div> */}
 
                 <div>
                   <label htmlFor="desc">Описание мероприятия:</label>
@@ -808,7 +811,7 @@ const AdminEvent = () => {
                           <li key={_id}>
                             <div>
                               <Link to={`/user/${_id}`}>
-                                <p>{role}</p>
+                                {/* <p>{role}</p> */}
                                 <p>{fullName}</p>
                               </Link>
                             </div>
@@ -869,7 +872,7 @@ const AdminEvent = () => {
                           <li key={_id}>
                             <div>
                               <Link to={`/user/${_id}`}>
-                                <p>{role}</p>
+                                {/* <p>{role}</p> */}
                                 <p>{fullName}</p>
                               </Link>
                             </div>
@@ -932,7 +935,7 @@ const AdminEvent = () => {
                           <li key={_id}>
                             <div>
                               <Link to={`/user/${_id}`}>
-                                <p>{role}</p>
+                                {/* <p>{role}</p> */}
                                 <p>{fullName}</p>
                               </Link>
                             </div>
@@ -998,7 +1001,7 @@ const AdminEvent = () => {
                             <li key={_id}>
                               <div>
                                 <Link to={`/user/${_id}`}>
-                                  <p>{role}</p>
+                                  {/* <p>{role}</p> */}
                                   <p>{fullName}</p>
                                 </Link>
                               </div>

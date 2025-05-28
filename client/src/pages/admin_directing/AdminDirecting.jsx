@@ -42,6 +42,9 @@ const AdminDirecting = ({ userData }) => {
   const [showNotificationRemoveUser, setShowNotificationRemoveUser] =
     useState(false);
 
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
+
   const { id } = useParams();
   const navigate = useNavigate();
 
@@ -158,6 +161,35 @@ const AdminDirecting = ({ userData }) => {
 
     getMembersUsers();
   }, []);
+
+  const handleDownload = async () => {
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const response = await axios.get(`/excel-direction-members/${id}`, {
+        responseType: "blob",
+      });
+
+      const blob = new Blob([response.data], {
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      });
+
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "участники-направления.xlsx";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error("Ошибка при скачивании файла:", err);
+      setError("Ошибка при скачивании файла");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const updateDirecting = async () => {
     try {
@@ -535,6 +567,10 @@ const AdminDirecting = ({ userData }) => {
                       {saving ? "Сохранение..." : "Обновить"}
                     </button>
 
+                    <button onClick={handleDownload}>
+                      Скачать список участников
+                    </button>
+
                     <button onClick={deleteDirection}>
                       Удалить студенческое объединение
                     </button>
@@ -621,7 +657,7 @@ const AdminDirecting = ({ userData }) => {
                         <li key={_id}>
                           <div>
                             <Link to={`/user/${_id}`}>
-                              <p>{role}</p>
+                              {/* <p>{role}</p> */}
                               <p>
                                 {fullName}. Группа: {group}
                               </p>
@@ -676,7 +712,7 @@ const AdminDirecting = ({ userData }) => {
                       <li key={_id}>
                         <div>
                           <Link to={`/user/${_id}`}>
-                            <p>{role}</p>
+                            {/* <p>{role}</p> */}
                             <p>
                               {fullName}. Группа: {group}
                             </p>

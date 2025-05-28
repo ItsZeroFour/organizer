@@ -131,8 +131,8 @@ const Directing = ({ userData }) => {
 
                           {directing.applications.includes(userData._id) && (
                             <button
+                              className={style.directing__buttons__red}
                               onClick={concelApplication}
-                              style={{ background: "red" }}
                             >
                               Отменить заявку
                             </button>
