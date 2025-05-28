@@ -38,7 +38,7 @@ const AdminEvent = ({ userData }) => {
 
   const [loadingAdmins, setLoadingAdmins] = useState(false);
 
-  const [directing, setDirecting] = useState("");
+  const [directingItem, setDirectingItem] = useState("");
   const [place, setPlace] = useState("");
   const [contact_name, setContact_name] = useState("");
   const [contact_email, setContact_email] = useState("");
@@ -107,7 +107,7 @@ const AdminEvent = ({ userData }) => {
           setDescription(response.data.description);
           setUserApplications(response.data.userApplications);
 
-          setDirecting(response.data.directing);
+          setDirectingItem(response.data.directing);
           setPlace(response.data.place);
           setContact_name(response.data.contact_name);
           setContact_email(response.data.contact_email);
@@ -155,6 +155,11 @@ const AdminEvent = ({ userData }) => {
           members: members,
           userApplications: userApplications,
           admins: adminsArr,
+          directing: directingItem,
+          place: place,
+          contact_name: contact_name,
+          contact_email: contact_email,
+          contact_work: contact_work,
         }
       );
 
@@ -702,8 +707,8 @@ const AdminEvent = ({ userData }) => {
                         />
                         <input
                           type="text"
-                          onChange={(event) => setDirecting(event.target.value)}
-                          value={directing}
+                          onChange={(event) => setDirectingItem(event.target.value)}
+                          value={directingItem}
                           placeholder="Направление (например, патриотическое)"
                         />
                         <input

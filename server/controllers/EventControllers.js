@@ -56,7 +56,7 @@ export const createEvent = async (req, res) => {
 
     const eventData = event._doc;
 
-    return res.status(404).json(eventData);
+    return res.status(200).json(eventData);
   } catch (err) {
     console.log(err);
     res.status(500).json({
