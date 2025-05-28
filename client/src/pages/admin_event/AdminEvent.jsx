@@ -809,12 +809,14 @@ const AdminEvent = () => {
                   ) : (
                     filteredMembers && (
                       <ul>
-                        {filteredMembers.map(({ fullName, role, _id }) => (
+                        {filteredMembers.map(({ fullName, group, _id }) => (
                           <li key={_id}>
                             <div>
                               <Link to={`/user/${_id}`}>
                                 {/* <p>{role}</p> */}
-                                <p>{fullName}</p>
+                                <p>
+                                  {fullName} Группа: {group}
+                                </p>
                               </Link>
                             </div>
 
@@ -870,12 +872,14 @@ const AdminEvent = () => {
                   ) : (
                     filteredStudents && (
                       <ul>
-                        {filteredStudents.map(({ fullName, role, _id }) => (
+                        {filteredStudents.map(({ fullName, group, _id }) => (
                           <li key={_id}>
                             <div>
                               <Link to={`/user/${_id}`}>
                                 {/* <p>{role}</p> */}
-                                <p>{fullName}</p>
+                                <p>
+                                  {fullName} Группа: {group}
+                                </p>
                               </Link>
                             </div>
 
@@ -933,32 +937,36 @@ const AdminEvent = () => {
                   ) : (
                     filteredApplications && (
                       <ul>
-                        {filteredApplications.map(({ fullName, role, _id }) => (
-                          <li key={_id}>
-                            <div>
-                              <Link to={`/user/${_id}`}>
-                                {/* <p>{role}</p> */}
-                                <p>{fullName}</p>
-                              </Link>
-                            </div>
+                        {filteredApplications.map(
+                          ({ fullName, group, _id }) => (
+                            <li key={_id}>
+                              <div>
+                                <Link to={`/user/${_id}`}>
+                                  {/* <p>{role}</p> */}
+                                  <p>
+                                    {fullName} Группа: {group}
+                                  </p>
+                                </Link>
+                              </div>
 
-                            {members.includes(_id) ? (
-                              <button
-                                onClick={() => removeStudentApplications(_id)}
-                                style={{ backgroundColor: "red" }}
-                              >
-                                Удалить
-                              </button>
-                            ) : (
-                              <button
-                                onClick={() => addStudentApplications(_id)}
-                                style={{ backgroundColor: "#009dff" }}
-                              >
-                                Добавить
-                              </button>
-                            )}
-                          </li>
-                        ))}
+                              {members.includes(_id) ? (
+                                <button
+                                  onClick={() => removeStudentApplications(_id)}
+                                  style={{ backgroundColor: "red" }}
+                                >
+                                  Удалить
+                                </button>
+                              ) : (
+                                <button
+                                  onClick={() => addStudentApplications(_id)}
+                                  style={{ backgroundColor: "#009dff" }}
+                                >
+                                  Добавить
+                                </button>
+                              )}
+                            </li>
+                          )
+                        )}
                       </ul>
                     )
                   )}
@@ -999,12 +1007,14 @@ const AdminEvent = () => {
                     filteredApplications2 && (
                       <ul>
                         {filteredApplications2.map(
-                          ({ fullName, role, _id }) => (
+                          ({ fullName, group, _id }) => (
                             <li key={_id}>
                               <div>
                                 <Link to={`/user/${_id}`}>
                                   {/* <p>{role}</p> */}
-                                  <p>{fullName}</p>
+                                  <p>
+                                    {fullName} Группа: {group}
+                                  </p>
                                 </Link>
                               </div>
 

@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useMemo } from "react";
 import style from "./style.module.scss";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import axios from "../../utils/axios";
@@ -35,6 +35,8 @@ const AdminDirecting = ({ userData }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [searchMemberTerm, setSearchMemberTerm] = useState("");
   const [searchOrganizerTerm, setSearchOrganizerTerm] = useState("");
+  const [searchMemberTermGroup, setSearchMemberTermGroup] = useState("");
+  const [searchGroupTerm, setSearchGroupTerm] = useState("");
 
   const [showNotificationUpdate, setShowNotificationUpdate] = useState(false);
   const [showNotificationDelete, setShowNotificationDelete] = useState(false);
@@ -235,17 +237,31 @@ const AdminDirecting = ({ userData }) => {
     }
   };
 
-  const filteredApplications = Array.isArray(applications)
-    ? applications.filter(({ fullName }) =>
-        fullName.toLowerCase().includes(searchTerm.toLowerCase())
-      )
-    : [];
+  const filteredApplications = useMemo(() => {
+    if (!Array.isArray(applications)) return [];
 
-  const filteredMembers = Array.isArray(membersFull)
-    ? membersFull.filter(({ fullName }) =>
-        fullName.toLowerCase().includes(searchMemberTerm.toLowerCase())
-      )
-    : [];
+    const name = searchTerm.toLowerCase();
+    const group = searchGroupTerm.toLowerCase();
+
+    return applications.filter(({ fullName, group: groupName }) => {
+      const matchName = fullName.toLowerCase().includes(name);
+      const matchGroup = groupName?.toLowerCase().includes(group);
+      return matchName && matchGroup;
+    });
+  }, [applications, searchTerm, searchGroupTerm]);
+
+  const filteredMembers = useMemo(() => {
+    if (!Array.isArray(membersFull)) return [];
+
+    const name = searchMemberTerm.toLowerCase();
+    const group = searchMemberTermGroup.toLowerCase();
+
+    return membersFull.filter(({ fullName, group: groupName }) => {
+      const matchName = fullName.toLowerCase().includes(name);
+      const matchGroup = groupName?.toLowerCase().includes(group);
+      return matchName && matchGroup;
+    });
+  }, [membersFull, searchMemberTerm, searchMemberTermGroup]);
 
   const filteredOrganizers = Array.isArray(organizers)
     ? organizers.filter(({ fullName }) =>
@@ -626,12 +642,21 @@ const AdminDirecting = ({ userData }) => {
 
               <h2>Входящие заявки студентов</h2>
 
-              <input
-                type="text"
-                placeholder="Поиск..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
+              <div>
+                <input
+                  type="text"
+                  placeholder="Поиск..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                />
+
+                <input
+                  type="text"
+                  placeholder="Поиск по группе..."
+                  value={searchGroupTerm}
+                  onChange={(e) => setSearchGroupTerm(e.target.value)}
+                />
+              </div>
 
               {loadingStudens ? (
                 <p>Загрузка студентов...</p>
@@ -682,12 +707,21 @@ const AdminDirecting = ({ userData }) => {
 
               <h2>Участники студенческого объединения</h2>
 
-              <input
-                type="text"
-                placeholder="Поиск..."
-                value={searchMemberTerm}
-                onChange={(e) => setSearchMemberTerm(e.target.value)}
-              />
+              <div>
+                <input
+                  type="text"
+                  placeholder="Поиск..."
+                  value={searchMemberTerm}
+                  onChange={(e) => setSearchMemberTerm(e.target.value)}
+                />
+
+                <input
+                  type="text"
+                  placeholder="Поиск по группе..."
+                  value={searchMemberTermGroup}
+                  onChange={(e) => setSearchMemberTermGroup(e.target.value)}
+                />
+              </div>
 
               {loadingMembers ? (
                 <p>Загрузка участников...</p>

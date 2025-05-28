@@ -223,6 +223,11 @@
   padding: 30px;
   border-radius: 30px;
 
+  div {
+    display: flex;
+    gap: 20px;
+  }
+
   h2 {
     margin-top: 20px;
   }
@@ -244,7 +249,7 @@
       gap: 10px;
 
       div {
-        width: 350px;
+        width: 450px;
         a {
           p {
             &:first-child {
