@@ -231,8 +231,10 @@ const CreateEvent = ({ userData }) => {
               <InputMask
                 mask="99.99.9999"
                 placeholder="ДД.ММ.ГГГГ"
-                value={dateStart}
-                onChange={(event) => setDateStart(event.target.value)}
+                value={dateApplicationFinish}
+                onChange={(event) =>
+                  setApplicationDateFinish(event.target.value)
+                }
               />
             </div>
           </form>
