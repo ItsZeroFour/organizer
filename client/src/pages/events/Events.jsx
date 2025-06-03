@@ -25,6 +25,7 @@ const Events = ({ userData }) => {
   const [selectedDirection, setSelectedDirection] = useState("");
   const [dateFilterEnabled, setDateFilterEnabled] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [showOnlyActive, setShowOnlyActive] = useState(false);
 
   useEffect(() => {
     const getEvents = async () => {
@@ -64,11 +65,14 @@ const Events = ({ userData }) => {
   ];
 
   const parseEventDate = (dateStr) => {
-    // Разбиваем на дату и время
-    const [datePart, timePart] = dateStr.split(", ");
+    if (!dateStr || typeof dateStr !== "string") return null;
+
+    const [datePart, timePart = "00:00"] = dateStr.split(", ");
     const [day, month, year] = datePart.split(".").map(Number);
     const [hours, minutes] = timePart.split(":").map(Number);
-    return new Date(year, month - 1, day, hours, minutes);
+
+    const date = new Date(year, month - 1, day, hours, minutes);
+    return isNaN(date.getTime()) ? null : date;
   };
 
   const filteredEvents = events
@@ -80,15 +84,28 @@ const Events = ({ userData }) => {
           searchQuery.trim() === "" ||
           event.name.toLowerCase().includes(searchQuery.toLowerCase());
 
-        if (!dateFilterEnabled) return matchesDirection && matchesSearch;
-
         const eventStart = parseEventDate(event.start);
-        const eventFinish = parseEventDate(event.finish);
+        const eventFinishApplications = parseEventDate(
+          event.finish_applications
+        );
+        const now = new Date();
+
+        const isActive =
+          eventFinishApplications instanceof Date &&
+          eventFinishApplications > now;
 
         const inDateRange =
-          eventFinish >= state[0].startDate && eventStart <= state[0].endDate;
+          eventFinishApplications instanceof Date &&
+          !isNaN(eventFinishApplications) &&
+          eventFinishApplications >= state[0].startDate &&
+          eventStart <= state[0].endDate;
 
-        return matchesDirection && inDateRange && matchesSearch;
+        return (
+          matchesDirection &&
+          matchesSearch &&
+          (!showOnlyActive || isActive) &&
+          (!dateFilterEnabled || inDateRange)
+        );
       })
     : [];
 
@@ -218,6 +235,18 @@ const Events = ({ userData }) => {
                           </option>
                         ))}
                       </select>
+                    </div>
+
+                    <div className={style.events__filter__checkbox}>
+                      <input
+                        id="active"
+                        type="checkbox"
+                        checked={showOnlyActive}
+                        onChange={(e) => setShowOnlyActive(e.target.checked)}
+                      />
+                      <label htmlFor="active">
+                        Только активные мероприятия
+                      </label>
                     </div>
 
                     <ul>

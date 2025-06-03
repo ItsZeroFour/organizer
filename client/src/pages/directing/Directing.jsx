@@ -13,6 +13,7 @@ const Directing = ({ userData }) => {
 
   const [showNotification1, setShowNotification1] = useState(false);
   const [showNotification2, setShowNotification2] = useState(false);
+  const [showNotification3, setShowNotification3] = useState(false);
 
   const { id } = useParams();
 
@@ -95,6 +96,16 @@ const Directing = ({ userData }) => {
       {showNotification2 && (
         <Notification title={"Успешно!"} text={"Вы отменили заявку!"} />
       )}
+
+      {showNotification3 && (
+        <Notification
+          title={"Ошибка!"}
+          text={
+            "Отменить заявку может только руководитель студенческого объединения!"
+          }
+        />
+      )}
+
       <div className={style.directing__wrapper}>
         {loadingDirecting ? (
           <p>Загрузка...</p>
@@ -116,10 +127,15 @@ const Directing = ({ userData }) => {
                       {userData?.role === "Студент" && (
                         <div className={style.directing__buttons}>
                           <button
-                            onClick={addUserToApplications}
-                            disabled={
-                              directing.applications.includes(userData._id) ||
+                            onClick={
                               directing.members.includes(userData._id)
+                                ? () => setShowNotification3(true)
+                                : addUserToApplications
+                            }
+                            disabled={
+                              (directing.applications.includes(userData._id) ||
+                                directing.members.includes(userData._id)) &&
+                              !directing.members.includes(userData._id)
                             }
                           >
                             {directing.applications.includes(userData._id)

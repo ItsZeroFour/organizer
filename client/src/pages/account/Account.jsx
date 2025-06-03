@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import style from "./style.module.scss";
 import { Link, useNavigate } from "react-router-dom";
 import InputMask from "react-input-mask";
@@ -12,12 +12,24 @@ import StudentsApplications3 from "../../components/account/StudentsApplications
 import StudentsEvents from "../../components/account/StudentsEvents";
 import NotificationNoReload from "../../components/notification/NotificationNoReload";
 
-const Account = ({ userData }) => {
-  const [group, setGroup] = useState(userData.group || "Не указано");
-  const [phone, setPhone] = useState(userData.phone || "Не указано");
-  const [post, setPost] = useState(userData.post || "Должность не указана");
+const Account = ({ userData, findUserProcess }) => {
+  useEffect(() => {
+    if (!userData) {
+      return navigate("/");
+    }
+  }, [userData]);
+
+  const [group, setGroup] = useState(
+    (userData && userData.group) || "Не указано"
+  );
+  const [phone, setPhone] = useState(
+    (userData && userData.phone) || "Не указано"
+  );
+  const [post, setPost] = useState(
+    (userData && userData.post) || "Должность не указана"
+  );
   const [birthdate, setBirthdate] = useState(
-    userData.birthdate || "Не указано"
+    (userData && userData.birthdate) || "Не указано"
   );
   const [showPageIndex, setShowPageIndex] = useState(0);
   const [showNotificationUpdate, setShowNotificationUpdate] = useState(false);
@@ -80,23 +92,26 @@ const Account = ({ userData }) => {
 
             {showPageIndex === 0 ? (
               <div className={style.account__main}>
-                <h3>{userData.fullName}</h3>
+                <h3>{userData && userData.fullName}</h3>
 
                 <h5>
-                  {userData.role.toLowerCase() === "студент"
+                  {userData && userData.role.toLowerCase() === "студент"
                     ? "Студент"
-                    : userData.role.toLowerCase() === "руководитель с.о."
+                    : userData &&
+                      userData.role.toLowerCase() === "руководитель с.о."
                     ? "Руководитель студенческого объединения"
-                    : userData.role.toLowerCase() === "сотрудник в.о."
+                    : userData &&
+                      userData.role.toLowerCase() === "сотрудник в.о."
                     ? "Сотрудник воспитательного отдела"
-                    : userData.role.toLowerCase() === "зам. в.о."
+                    : userData && userData.role.toLowerCase() === "зам. в.о."
                     ? "Заместитель директора по воспитательной работе"
-                    : userData.role.toLowerCase() === "руководитель в.о."
+                    : userData &&
+                      userData.role.toLowerCase() === "руководитель в.о."
                     ? "Руководитель воспитательного отдела"
                     : "Администратор"}
                 </h5>
 
-                {userData.role.toLowerCase() === "студент" ? (
+                {userData && userData.role.toLowerCase() === "студент" ? (
                   <div className={style.account__newinfo}>
                     <p>Контактная информация</p>
 
@@ -156,17 +171,18 @@ const Account = ({ userData }) => {
                       />
                     </div>
 
-                    {userData.role.toLowerCase() === "сотрудник в.о." && (
-                      <div>
-                        <p>Должность</p>
-                        <input
-                          type="text"
-                          placeholder="Должность"
-                          value={post}
-                          onChange={(e) => setPost(e.target.value)}
-                        />
-                      </div>
-                    )}
+                    {userData &&
+                      userData.role.toLowerCase() === "сотрудник в.о." && (
+                        <div>
+                          <p>Должность</p>
+                          <input
+                            type="text"
+                            placeholder="Должность"
+                            value={post}
+                            onChange={(e) => setPost(e.target.value)}
+                          />
+                        </div>
+                      )}
 
                     <button onClick={handleSave}>Сохранить</button>
                   </div>
@@ -186,13 +202,13 @@ const Account = ({ userData }) => {
               <React.Fragment>
                 <div className={style.account__main}>
                   <div className={style.account__items}>
-                    {userData.role !== "Студент" ? (
+                    {userData && userData.role !== "Студент" ? (
                       <React.Fragment>
-                        <AdminsDirecting userId={userData._id} />
+                        <AdminsDirecting userId={userData && userData._id} />
                       </React.Fragment>
                     ) : (
                       <div className={style.account__list}>
-                        <StudentsDirecting userId={userData._id} />
+                        <StudentsDirecting userId={userData && userData._id} />
                         {/* <StudentsApplications2
                           userData={userData}
                           userId={userData._id}

@@ -455,7 +455,7 @@ const AdminDirecting = ({ userData }) => {
 
                       <div className={style.create_direction__organizers}>
                         <button onClick={() => setShowPageIndex(3)}>
-                          Участники направления
+                          Участники студенческого объединения
                         </button>
                       </div>
                     </div>

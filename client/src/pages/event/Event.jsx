@@ -21,6 +21,7 @@ const Event = ({ userData }) => {
 
   const [showNotification1, setShowNotification1] = useState(false);
   const [showNotification2, setShowNotification2] = useState(false);
+  const [showNotification3, setShowNotification3] = useState(false);
 
   const { id } = useParams();
 
@@ -123,6 +124,8 @@ const Event = ({ userData }) => {
         const now = new Date();
         const diff = finishDate - now;
 
+        console.log(day, month, year);
+
         if (diff <= 0) {
           setTimeLeft("Срок завершён");
           clearInterval(interval);
@@ -157,6 +160,13 @@ const Event = ({ userData }) => {
 
       {showNotification2 && (
         <Notification title={"Успешно!"} text={"Вы отменили заявку"} />
+      )}
+
+      {showNotification3 && (
+        <Notification
+          title={"Ошибка!"}
+          text={"Отменить заявку может только руководитель мероприятия!"}
+        />
       )}
 
       <div className={style.event__wrapper}>
@@ -198,14 +208,21 @@ const Event = ({ userData }) => {
                         {userData && userData.role === "Студент" && (
                           <div className={style.event__buttons}>
                             <button
-                              onClick={handleJoinEvent}
-                              style={isEnd ? { opacity: 0.8 } : { opacity: 1 }}
+                              onClick={
+                                event.members.includes(userData._id)
+                                  ? () => setShowNotification3(true)
+                                  : handleJoinEvent
+                              }
                               disabled={
-                                event.userApplications.includes(userData._id) ||
-                                event.members.includes(userData._id) ||
-                                event.applications.includes(userData._id) ||
+                                (event.applications.includes(userData._id) ||
+                                  event.userApplications.includes(
+                                    userData._id
+                                  ) ||
+                                  isEnd) &&
+                                !event.members.includes(userData._id) &&
                                 isEnd
                               }
+                              style={isEnd ? { opacity: 0.8 } : { opacity: 1 }}
                             >
                               {event.applications.includes(userData._id) ||
                               event.userApplications.includes(userData._id)

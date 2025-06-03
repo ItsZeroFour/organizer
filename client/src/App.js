@@ -17,7 +17,7 @@ import AdminEvent from "./pages/admin_event/AdminEvent";
 import Contacts from "./pages/contacts/Contacts";
 
 function App() {
-  const [findUserProcess, setFindUserProcess] = useState(false);
+  const [findUserProcess, setFindUserProcess] = useState(true);
   const [userData, setUserData] = useState(null);
 
   useEffect(() => {
@@ -67,13 +67,18 @@ function App() {
                 element={<Event userData={userData} />}
               />
               <Route path="/events" element={<Events userData={userData} />} />
+              <Route
+                path="/account"
+                element={
+                  <Account
+                    userData={userData}
+                    findUserProcess={findUserProcess}
+                  />
+                }
+              />
 
               {userData && (
                 <>
-                  <Route
-                    path="/account"
-                    element={<Account userData={userData} />}
-                  />
                   <Route
                     path="/admin-directing/:id"
                     element={<AdminDirecting userData={userData} />}
